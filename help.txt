@@ -1,0 +1,34 @@
+Install on Linux/Docker
+Usage: 1. bash end2end.sh all (require data_experiment.txt)
+       2. bash end2end.sh clippath all
+       3. bash end2end.sh clippath model mode
+
+DAVIS 2017 trainval
+dataset. This dataset is a collection of video clips of 854
+x 480p sizes, which have a wider screen ratio, but we preprocess the dataset as a 4:3 old screen ratio by cropping the
+center of frames to size of 640 x 480
+
+clippath is the path to the txt files in ImageSets
+
+FIXES:
+1) masking.py
+command a single image or a set of image :python masking.py rawdataset/DAVIS_640x480/00000.jpg
+
+a) fix mmdetection keyError replace:
+from mmdetection.mmdet.apis import inference_detector,init_detector
+with mmdet.apis import inference_detector,init_detector
+
+then pip install mmdet
+
+
+b) If args.device not found error (CUDA):
+comment (remove comment if needed)
+#if args.device == None:
+    #args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+...
+model_m2f = init_detector(args.config, args.checkpoint, device='cpu')
+
+c) change to updated model
+args.config = 'mmdetection/configs/mask2former/mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco.py'
+args.checkpoint = 'mmdetection/checkpoints/E2FGVI/release_model/E2FGVI-HQ-CVPR22.pth'
+
