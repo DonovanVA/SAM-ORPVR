@@ -5,10 +5,9 @@ import json
 from tqdm import tqdm
 from glob import glob
 import numpy as np
-
 import torch
 
-from mmdetection.mmdet.apis import inference_detector,init_detector
+from mmdet.apis import inference_detector,init_detector
 
 from util.option_masking import args,compute_intersect_area
 
@@ -70,8 +69,8 @@ def segmentation(args,model):
 if args.device == None:
     args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-args.config = 'mmdetection/configs/mask2former/mask2former_swin-s-p4-w7-224_lsj_8x2_50e_coco.py'
-args.checkpoint = 'mmdetection/checkpoints/mask2former_swin-s-p4-w7-224_lsj_8x2_50e_coco_20220504_001756-743b7d99.pth'
+args.config = 'mmdetection/configs/mask2former/mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco.py'
+args.checkpoint = 'mmdetection/checkpoints/E2FGVI/release_model/E2FGVI-HQ-CVPR22.pth'
 model_m2f = init_detector(args.config, args.checkpoint, device=args.device)
 
 datadir = args.dstdir

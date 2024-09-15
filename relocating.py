@@ -5,7 +5,6 @@ import json
 
 from glob import glob
 from tqdm import tqdm
-
 import torch
 
 from util.option_relocate import args, Relocator
