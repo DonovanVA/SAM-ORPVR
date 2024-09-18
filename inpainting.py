@@ -11,8 +11,8 @@ from torchvision.transforms import ToTensor
 from util.option_inpaint import args
 
 def main(args):
-    if args.device == None:
-        args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #if args.device == None:
+        #args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Path
     if args.src.endswith('/'):

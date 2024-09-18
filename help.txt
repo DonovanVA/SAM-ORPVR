@@ -10,6 +10,12 @@ center of frames to size of 640 x 480
 
 clippath is the path to the txt files in ImageSets
 
+COMMANDS:
+
+python masking.py rawdataset/DAVIS_640x480/bear/00000.jpg 
+python inpainting.py dataset/sample --model e2fgvi_hq ('aotgan', 'e2fgvi', 'e2fgvi_hq')
+python relocating.py result_inpaint/$model/$clip --mode $mode ('original','offset','dynamic')
+
 FIXES:
 1) masking.py
 command a single image or a set of image :python masking.py rawdataset/DAVIS_640x480/00000.jpg
@@ -20,7 +26,6 @@ with mmdet.apis import inference_detector,init_detector
 
 then pip install mmdet
 
-
 b) If args.device not found error (CUDA):
 comment (remove comment if needed)
 #if args.device == None:
@@ -28,7 +33,254 @@ comment (remove comment if needed)
 ...
 model_m2f = init_detector(args.config, args.checkpoint, device='cpu')
 
-c) change to updated model
+- change to updated model
 args.config = 'mmdetection/configs/mask2former/mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco.py'
-args.checkpoint = 'mmdetection/checkpoints/E2FGVI/release_model/E2FGVI-HQ-CVPR22.pth'
+args.checkpoint = 'mmdetection/checkpoints/E2FGVI/release_model/coco_mask2former_swin-s_mIoU-47.6.pth'
+
+OR
+
+- enable CUDA
+c) download the model:
+mim download mmdet --config mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco --dest .
+install tensorflow
+python -m pip install tf-nightly
+
+d) 
+result in line 21-23 is a JSON object
+mask = np.zeros((args.h,args.w),dtype=np.uint8)
+    objects = {'box':[],'coor':[]}
+    print(result.pred_instances.scores)
+
+how the code should work:
+result = [
+    [   # Bounding boxes
+        [   # Class: "person"
+            [50, 60, 200, 300, 0.95],  # Object 1: person with 95% confidence
+            [400, 100, 600, 500, 0.88] # Object 2: person with 88% confidence
+        ],
+        [   # Class: "car"
+            [120, 150, 300, 400, 0.92] # Object 1: car with 92% confidence
+        ]
+    ],
+    [   # Segmentation masks
+        [   # Class: "person"
+            array([[0, 0, 1, ..., 0], [0, 1, 1, ..., 0], ...]),  # Mask for first person
+            array([[0, 0, 0, ..., 1], [0, 0, 1, ..., 1], ...])   # Mask for second person
+        ],
+        [   # Class: "car"
+            array([[1, 1, 0, ..., 0], [1, 0, 0, ..., 1], ...])   # Mask for car object
+        ]
+    ]
+]
+
+current output based on new model:
+<DetDataSample(
+
+    META INFORMATION
+    img_shape: (749, 1333)
+    batch_input_shape: (768, 1344)
+    img_path: 'rawdataset/DAVIS_640x480/breakdance-flare\\00000.jpg'
+    ori_shape: (480, 854)
+    pad_shape: (768, 1344)
+    scale_factor: (1.5608899297423888, 1.5604166666666666)
+    img_id: 0
+
+    DATA FIELDS
+    pred_instances: <InstanceData(
+
+            META INFORMATION
+
+            DATA FIELDS
+            bboxes: tensor([[ 51.,   0., 851., 468.],
+                        [ 51.,   0., 854., 468.],
+                        [ 53.,   0., 851., 430.],
+                        [ 54.,   0., 851., 430.],
+                        [ 51.,   0., 854., 468.],
+                        [ 50.,   0., 851., 468.],
+                        [ 50.,   0., 854., 466.],
+                        [ 51.,   0., 854., 432.],
+                        [ 52.,   0., 854., 430.],
+                        [ 51.,   0., 851., 468.],
+                        [ 50.,   0., 854., 468.],
+                        [ 52.,   2., 851., 430.],
+                        [ 53.,   0., 851., 430.],
+                        [ 51.,   0., 851., 468.],
+                        [ 50.,   0., 854., 468.],
+                        [ 50.,   0., 854., 468.],
+                        [ 51.,   0., 854., 468.],
+                        [ 51.,   0., 854., 430.],
+                        [ 50.,   0., 854., 468.],
+                        [ 56.,   0., 702., 430.],
+                        [ 53.,   0., 851., 430.],
+                        [ 52.,   0., 851., 466.],
+                        [ 53.,   0., 851., 430.],
+                        [ 52.,   2., 851., 431.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 851., 433.],
+                        [ 52.,   0., 851., 432.],
+                        [ 51.,   0., 854., 466.],
+                        [ 50.,   0., 853., 466.],
+                        [ 50.,   0., 854., 466.],
+                        [ 52.,   0., 852., 432.],
+                        [ 50.,   0., 854., 430.],
+                        [ 51.,   0., 851., 466.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 854., 468.],
+                        [ 54.,   1., 850., 429.],
+                        [ 50.,   0., 854., 468.],
+                        [ 51.,   0., 852., 468.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 853., 430.],
+                        [ 57.,   3., 850., 425.],
+                        [ 52.,   0., 852., 430.],
+                        [ 51.,   0., 854., 466.],
+                        [ 51.,   0., 851., 432.],
+                        [ 50.,   0., 854., 466.],
+                        [ 52.,   0., 854., 432.],
+                        [ 53.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 53.,   0., 851., 430.],
+                        [ 51.,   0., 854., 466.],
+                        [ 50.,   0., 851., 466.],
+                        [ 52.,   0., 853., 430.],
+                        [ 53.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 854., 466.],
+                        [ 52.,   0., 854., 430.],
+                        [ 50.,   0., 854., 468.],
+                        [ 50.,   0., 854., 468.],
+                        [ 52.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 854., 430.],
+                        [ 53.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 52.,   0., 854., 430.],
+                        [ 50.,   0., 854., 468.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 854., 430.],
+                        [ 50.,   0., 854., 468.],
+                        [ 53.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 854., 430.],
+                        [ 52.,   0., 851., 466.],
+                        [ 54.,   2., 702., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 851., 431.],
+                        [ 51.,   0., 854., 466.],
+                        [ 50.,   0., 854., 466.],
+                        [ 54.,   1., 851., 430.],
+                        [ 51.,   0., 854., 466.],
+                        [ 51.,   0., 854., 466.],
+                        [ 51.,   0., 854., 466.],
+                        [ 54.,   1., 851., 430.],
+                        [ 52.,   0., 851., 466.],
+                        [ 52.,   0., 851., 430.],
+                        [ 52.,   0., 854., 430.],
+                        [ 50.,   0., 854., 466.],
+                        [ 51.,   0., 854., 466.],
+                        [ 51.,   0., 851., 468.],
+                        [ 52.,   0., 854., 425.],
+                        [ 51.,   0., 853., 430.],
+                        [ 53.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 851., 430.],
+                        [ 51.,   0., 854., 430.],
+                        [ 50.,   0., 854., 468.],
+                        [ 50.,   0., 851., 430.],
+                        [ 52.,   0., 851., 430.],
+                        [ 51.,   0., 851., 432.],
+                        [ 53.,   0., 851., 430.]])
+            scores: tensor([0.0300, 0.0288, 0.0279, 0.0275, 0.0283, 0.0277, 0.0276, 0.0268, 0.0263,
+                        0.0264, 0.0268, 0.0257, 0.0252, 0.0253, 0.0260, 0.0258, 0.0255, 0.0252,
+                        0.0255, 0.0243, 0.0243, 0.0245, 0.0243, 0.0244, 0.0241, 0.0244, 0.0243,
+                        0.0242, 0.0242, 0.0243, 0.0238, 0.0241, 0.0242, 0.0239, 0.0240, 0.0234,
+                        0.0243, 0.0241, 0.0238, 0.0238, 0.0230, 0.0238, 0.0241, 0.0239, 0.0236,
+                        0.0238, 0.0233, 0.0234, 0.0230, 0.0237, 0.0234, 0.0234, 0.0231, 0.0230,
+                        0.0235, 0.0232, 0.0236, 0.0234, 0.0229, 0.0228, 0.0231, 0.0227, 0.0228,
+                        0.0224, 0.0232, 0.0224, 0.0232, 0.0232, 0.0226, 0.0225, 0.0227, 0.0223,
+                        0.0217, 0.0221, 0.0225, 0.0227, 0.0227, 0.0216, 0.0221, 0.0223, 0.0220,
+                        0.0214, 0.0216, 0.0217, 0.0221, 0.0222, 0.0216, 0.0217, 0.0213, 0.0216,
+                        0.0212, 0.0212, 0.0211, 0.0213, 0.0213, 0.0215, 0.0208, 0.0205, 0.0209,
+                        0.0204])
+            masks: tensor([[[False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         ...,
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False]],
+
+                        [[False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         ...,
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False]],
+
+                        [[False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         ...,
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False]],
+
+                        ...,
+
+                        [[False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         ...,
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False]],
+
+                        [[False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         ...,
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False]],
+
+                        [[False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         ...,
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False],
+                         [False, False, False,  ..., False, False, False]]])
+            labels: tensor([19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                        19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                        19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                        19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+                        19, 19, 19, 19, 19, 20, 19, 19, 19, 19, 19, 19, 19, 19, 19, 20, 19, 19,
+                        19, 19, 19, 19, 20, 20, 19, 19, 20, 20])
+        ) at 0x21e416be280>
+    gt_instances: <InstanceData(
+
+            META INFORMATION
+
+            DATA FIELDS
+            bboxes: tensor([], size=(0, 4))
+            masks: BitmapMasks(num_masks=0, height=480, width=854)
+            labels: tensor([], dtype=torch.int64)
+        ) at 0x21e416be100>
+    ignored_instances: <InstanceData(
+
+            META INFORMATION
+
+            DATA FIELDS
+            bboxes: tensor([], size=(0, 4))
+            masks: BitmapMasks(num_masks=0, height=480, width=854)
+            labels: tensor([], dtype=torch.int64)
+        ) at 0x21e416be130>
+) at 0x21e416beeb0>
+
+
+2. inpainting:
+#if args.device == None:
+        #args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
