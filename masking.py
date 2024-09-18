@@ -85,13 +85,12 @@ def segmentation(args,model):
     cv2.imwrite(os.path.join(args.maskdir,fname+'.png'), mask)
     with open(os.path.join(args.objdir,fname+'.json'),"w") as f:
         json.dump(objects,f)
-
-#if args.device == None:
-    #args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+if args.device == None:
+    args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 args.config = 'mmdetection\mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco.py'
 args.checkpoint = 'mmdetection\mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco_20220504_001756-c9d0c4f2.pth'
-model_m2f = init_detector(args.config, args.checkpoint, device='cpu')
+model_m2f = init_detector(args.config, args.checkpoint, device=args.device)
 
 datadir = args.dstdir
 

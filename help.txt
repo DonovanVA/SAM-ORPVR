@@ -26,27 +26,17 @@ with mmdet.apis import inference_detector,init_detector
 
 then pip install mmdet
 
-b) If args.device not found error (CUDA):
-comment (remove comment if needed)
-#if args.device == None:
-    #args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-...
-model_m2f = init_detector(args.config, args.checkpoint, device='cpu')
-
-- change to updated model
-args.config = 'mmdetection/configs/mask2former/mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco.py'
-args.checkpoint = 'mmdetection/checkpoints/E2FGVI/release_model/coco_mask2former_swin-s_mIoU-47.6.pth'
-
-OR
-
-- enable CUDA
-c) download the model:
+b) enable CUDA
+download the model:
 mim download mmdet --config mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco --dest .
 install tensorflow
-python -m pip install tf-nightly
+tensorflow                    2.10.1
+torch                         2.0.0
+CUDAv11.7
+add in cudnn64_8.dll: https://www.dll-files.com/cudnn64_8.dll.html#google_vignette if not found
+c) download util file in 'test clear' commit of main branch
 
-d) 
-result in line 21-23 is a JSON object
+d) result in line 21-23 is a JSON object
 mask = np.zeros((args.h,args.w),dtype=np.uint8)
     objects = {'box':[],'coor':[]}
     print(result.pred_instances.scores)
