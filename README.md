@@ -5,27 +5,18 @@
     2. Do not install `mmdet` independently as it will also force install the later or compatible version of mmcv 
     3. You have to `pip install -v -e .` from the mmdetection 2.x, as I will explain later
     4. tensorflow does not have support for the later cuda versions (12.x), so it is best to install (11.x)
-    5. missing dll files can be identified and downloadedm
+    5. Missing dll files can be identified and downloadedm
 ### Setting Up
     I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable
+    
+1. **Install Dependencies and DAVIS 2016 dataset:**
 
-1. **Install Dependencies:**
+    ```bash
+    pip install -U openmim
+    mim install mmcv-full
+    ```
 
-   Ensure you have the following versions of the packages:
-
-   - `mmcv-full` 1.7.2
-   - `mmdet` 2.28.2
-   - `mmengine` 0.10.4
-
-   If you accidentally install the wrong version, uninstall the current packages and reinstall:
-
-   ```bash
-   pip uninstall mmdet
-   pip uninstall mmcv
-   pip uninstall mmcv-full
-
-   pip install -U openmim
-   mim install mmcv-full
+   - Davis Dataset: https://davischallenge.org/davis2016/code.html
 
 2. **Download the correct version of mmdetection**
     download mmdetection v2.0
@@ -36,7 +27,37 @@
     mkdir checkpoints
     pip install -v -e .
     ```
-    *DO NOT install mmcv==1.7.2 and the latest version (2.0.0+) as it will lead to keyErrors mmcv.runner and mmcv._ext module not found
+    *WARNING: DO NOT install mmcv==1.7.2 and the latest version (2.0.0+) as it will lead to keyErrors mmcv.runner and mmcv._ext module not found
+
+    Ensure you have the following versions of the packages:
+   - `mmcv-full` 1.7.2
+   - `mmdet` 2.28.2
+   - `mmengine` 0.10.4
+
+   *If you accidentally install the wrong version (probably if you install mmdetection 3.x+), uninstall the current packages and reinstall:
+
+    ```bash
+    pip uninstall mmdet
+    pip uninstall mmcv
+    pip uninstall mmcv-full
+    pip install -U openmim
+    mim install mmcv-full
+
+    cd mmdetection
+    mkdir checkpoints
+    pip install -v -e .
+    ```
+    then make sure you are using mmdetection v2.0:
+    https://github.com/open-mmlab/mmdetection/tree/2.x
+    before running 
+    
+    ```bash
+    cd mmdetection
+    mkdir checkpoints
+    pip install -v -e .
+    ```
+
+    again
 
 3. **masking.py fix (if you get AssertionError)**
     change this in line 11
