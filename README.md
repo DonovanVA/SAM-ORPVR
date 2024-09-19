@@ -109,31 +109,31 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
 
 8. **test commands (In order)**
     sample is a sample directory
-    1. Crop (crop.py)
+    ##### 1. Crop (crop.py)
     ```bash
     python crop.py sample sample_processed --width 640 --height 480
     ```
     *(no "/", sample is your folder containing raw images)
 
-    2. Mask (masking.py)
+    ##### 2. Mask (masking.py)
     ```bash
     python masking.py sample_processed
     ``` 
     *(no "/", sample_processed is your folder containing processed images), saves to /dataset dir
 
-    3. Inpainting (inpaiting.py)
+    ##### 3. Inpainting (inpaiting.py)
     ```bash
     python inpainting.py dataset/sample_processed --model e2fgvi_hq
     ``` 
     *--mode can be: ('aotgan', 'e2fgvi', 'e2fgvi_hq'), saves to result_inpaint dir
 
-    4. Relocating (relocating.py)
+    ##### 4. Relocating (relocating.py)
     ```bash
     python relocating.py result_inpaint/sample_processed/e2fgvi_hq --mode 0
     ```
     *--mode can be integers 0,1,2 for: (0:'original', 1:'offset', 2:'dynamic'), saves to result dir
 
-    5. Encoding (encoding.py)
+    ##### 5. Encoding (encoding.py)
     ```bash
     python encoding.py result/sample_processed/e2fgvi_hq/original
     ```
