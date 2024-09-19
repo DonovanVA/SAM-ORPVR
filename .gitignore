@@ -9,4 +9,6 @@
 !README.md
 !.gitignore
 !help.txt
+!crop.py
+!sample/
 DAVIS/
