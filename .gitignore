@@ -11,4 +11,5 @@
 !help.txt
 !crop.py
 !sample/
+!sample/**/*.jpg
 DAVIS/
