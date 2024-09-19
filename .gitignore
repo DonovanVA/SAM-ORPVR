@@ -13,4 +13,5 @@
 !sample/
 !sample/**/*.jpg
 !util
+!util/**/*.py
 DAVIS/
