@@ -1,11 +1,11 @@
 # Updated ORPVR Installation and Usage Guide
-    Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has been outdated and does not have any version checking so this repo will help to find and explain the required libraries (and versions) especially those facing issues with mmcv and mmdet
+    ### Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has been outdated and does not have any version checking so this repo will help to find and explain the required libraries (and versions) especially those facing issues with mmcv and mmdet
 ## Notes/Precautions:
-    1. You cannot use `mmcv>=2.0.0` as the new configuration lacks the appropriate models and dependencies that are needed for ORPVR
-    2. Do not install `mmdet` independently as it will also force install the later or compatible version of mmcv 
-    3. You have to `pip install -v -e .` from the mmdetection 2.x, as I will explain later
-    4. tensorflow does not have support for the later cuda versions (12.x), so it is best to install (11.x)
-    5. Missing dll files can be identified and downloadedm
+    - You cannot use `mmcv>=2.0.0` as the new configuration lacks the appropriate models and dependencies that are needed for ORPVR
+    - Do not install `mmdet` independently as it will also force install the later or compatible version of mmcv 
+    - You have to `pip install -v -e .` from the mmdetection 2.x, as I will explain later
+    - tensorflow does not have support for the later cuda versions (12.x), so it is best to install (11.x)
+    - Missing dll files can be identified and downloadedm
 ### Setting Up
     I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable
     
