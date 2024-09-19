@@ -139,7 +139,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```bash
     python relocating.py result_inpaint/sample_processed/e2fgvi_hq --mode 0
     ```
-    *--mode can be integers 0,1,2 for: (0:'original', 1:'offset', 2:'dynamic'), saves to result dir
+    *--mode can be integers 0, 1, 2 for: (0:'original', 1:'offset', 2:'dynamic'), saves to result dir
 
     ##### 5. Encoding (encoding.py)
     ```bash
