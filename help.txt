@@ -76,6 +76,6 @@ git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
 COMMANDS:
 python image_preprocess.py sample sample_processed --width 640 --height 480 #(no "/", sample is your folder containing raw images)
 python masking.py sample_processed #(no "/", sample_processed is your folder containing processed images). saves to /dataset dir
-python inpainting.py dataset/sample_processed --model e2fgvi_hq #('aotgan', 'e2fgvi', 'e2fgvi_hq') saves to result_inpaint dir
-python relocating.py result_inpaint/sample_processed/e2fgvi_hq --mode 0 #(0:'original',1:'offset',2:'dynamic') saves to result dir
-python encoding.py result/sample_processed/e2fgvi_hq/modes[0] #(0:'original',1:'offset',2:'dynamic') saves to video dir
+python inpainting.py dataset/sample_processed --model e2fgvi_hq #('aotgan', 'e2fgvi', 'e2fgvi_hq') saves to /result_inpaint dir
+python relocating.py result_inpaint/sample_processed/e2fgvi_hq --mode 0 #(0:'original',1:'offset',2:'dynamic') saves to /result dir
+python encoding.py result/sample_processed/e2fgvi_hq/original #('original','offset','dynamic') saves to /video dir
