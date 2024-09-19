@@ -8,7 +8,12 @@ Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has 
 3. You have to `pip install -v -e .` from the mmdetection 2.x, as I will explain later
 4. Tensorflow does not have support for the later cuda versions (12.x), so it is best to install (11.x)
 5. Missing dll files can be identified and downloaded
+6. Added `crop.py` to crop the images from DAVIS 2016 before running the pipeline crop->(masking->inpainting->relocating->encoding)
 ### Setting Up Guide
+
+https://github.com/user-attachments/assets/943b2469-36ca-4932-b881-0d52008fe68b
+
+
 I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable
     
 1. **Install Dependencies and DAVIS 2016 dataset:**
@@ -108,7 +113,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
 
 8. **test commands (In order)**
-    sample is a sample directory
+    sample is a sample directory containing 480p breakdance-flare in DAVIS 2016 dataset
     ##### 1. Crop (crop.py)
     ```bash
     python crop.py sample sample_processed --width 640 --height 480
