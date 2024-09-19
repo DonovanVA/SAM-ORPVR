@@ -10,7 +10,9 @@ Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has 
 5. Missing dll files can be identified and downloaded
 6. Added `crop.py` to crop the images from DAVIS 2016 before running the pipeline crop->(masking->inpainting->relocating->encoding)
 
-https://github.com/user-attachments/assets/943b2469-36ca-4932-b881-0d52008fe68b
+Demo:
+https://github.com/user-attachments/assets/ba2d2ad6-ed55-43d9-bd63-faac7083846a
+
 
 ### Setting Up Guide
 
