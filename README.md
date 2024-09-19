@@ -119,22 +119,22 @@
     ```bash
     python masking.py sample_processed
     ``` 
-    *(no "/", sample_processed is your folder containing processed images). saves to /dataset dir
+    *(no "/", sample_processed is your folder containing processed images), saves to /dataset dir
 
     ### 3. Inpainting (inpaiting.py)
     ```bash
     python inpainting.py dataset/sample_processed --model e2fgvi_hq
     ``` 
-    *--mode can be: ('aotgan', 'e2fgvi', 'e2fgvi_hq') saves to result_inpaint dir
+    *--mode can be: ('aotgan', 'e2fgvi', 'e2fgvi_hq'), saves to result_inpaint dir
 
     ### 4. Relocating (relocating.py)
     ```bash
     python relocating.py result_inpaint/sample_processed/e2fgvi_hq --mode 0
     ```
-    *--mode can be: ('original', 'offset', 'dynamic') saves to result dir
+    *--mode can be integers 0,1,2 for: (0:'original', 1:'offset', 2:'dynamic'), saves to result dir
 
     ### 5. Encoding (encoding.py)
     ```bash
     python encoding.py result/sample_processed/e2fgvi_hq/original
     ```
-    *original can be:('original', 'offset', 'dynamic') saves to video dir
+    *original can be:('original', 'offset', 'dynamic'), saves to video dir
