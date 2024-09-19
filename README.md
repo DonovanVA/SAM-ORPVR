@@ -87,12 +87,12 @@
     ```
     python inpainting.py dataset/sample_processed --model e2fgvi_hq
     ``` 
-    *('aotgan', 'e2fgvi', 'e2fgvi_hq') saves to result_inpaint dir
+    *--mode can be: ('aotgan', 'e2fgvi', 'e2fgvi_hq') saves to result_inpaint dir
     ```
     python relocating.py result_inpaint/sample_processed/e2fgvi_hq --mode 0
     ```
-    *(0:'original',1:'offset',2:'dynamic') saves to result dir
+    *--mode can be: (0:'original',1:'offset',2:'dynamic') saves to result dir
     ```
     python encoding.py result/sample_processed/e2fgvi_hq/modes[0]
     ```
-    *(0:'original',1:'offset',2:'dynamic') saves to video dir
+    *mode[index] where the variable index is either(0:'original',1:'offset',2:'dynamic') saves to video dir
