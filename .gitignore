@@ -12,4 +12,5 @@
 !crop.py
 !sample/
 !sample/**/*.jpg
+!util
 DAVIS/
