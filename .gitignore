@@ -18,4 +18,3 @@ end2end.sh
 !util
 !util/**/*.py
 !bulk.sh
-DAVIS/
