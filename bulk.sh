@@ -61,6 +61,7 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
     # Step 3: Inpaint images using the specified model
     echo "Running inpainting.py on dataset/${SAMPLE_NAME##*/} with model $MODEL_TYPE..."
     python inpainting.py "dataset/${SAMPLE_NAME##*/}" --model "$MODEL_TYPE"
+    
     # Step 4: Relocate images using the specified mode
     echo "Running relocating.py on result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE with mode $MODE..."
     python relocating.py "result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE" --mode "$MODE"
