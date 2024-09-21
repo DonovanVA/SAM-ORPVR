@@ -1,6 +1,10 @@
 # Updated ORPVR Installation and Usage Guide
 Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has been outdated and does not have any version checking so this repo will help to find and explain the required libraries (and versions) especially those facing issues with mmcv and mmdet
 
+Research paper:
+J. -G. Jin, J. Bae, H. -G. Baek and S. -H. Park, "Object-Ratio-Preserving Video Retargeting Framework based on Segmentation and Inpainting," 2023 IEEE/CVF Winter Conference on Applications of Computer Vision Workshops (WACVW), Waikoloa, HI, USA, 2023, pp. 497-503, doi: 10.1109/WACVW58289.2023.00055.
+keywords: {Computer vision;Semantic segmentation;Conferences;Videos},
+
 ## Notes/Precautions:
 #### After hours of finding the correct version, I discovered these key changes and important precautions to take when installing:
 1. You cannot use `mmcv>=2.0.0` as the new configuration lacks the appropriate models and dependencies that are needed for ORPVR
@@ -8,8 +12,10 @@ Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has 
 3. You have to `pip install -v -e .` from the mmdetection 2.x, as I will explain later
 4. Tensorflow does not have support for the later cuda versions (12.x), so it is best to install (11.x)
 5. Missing dll files can be identified and downloaded
-6. Added `crop.py` to crop the images from DAVIS 2016 before running the pipeline crop->(masking->inpainting->relocating->encoding)
-
+6. Crop step was missing from the repo, so I added `crop.py` to crop the images from DAVIS 2016 as mentioned in their paper before running the pipeline: 
+    - Original repo: masking->inpainting->relocating->encoding
+    - This repo: crop->masking->inpainting->relocating->encoding
+7. AOT-GAN has a poorer performance as mentioned in the paper, but it can be selected and used.
 Demo:
 
 https://github.com/user-attachments/assets/ba2d2ad6-ed55-43d9-bd63-faac7083846a
@@ -92,6 +98,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
         https://www.dll-files.com/cudnn64_8.dll.html#google_vignette
         place it in the
         NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
+
     - install tensorflow, you should get these versions:
         ```bash
         tensorflow                    2.10.1
@@ -114,13 +121,13 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     https://drive.google.com/drive/folders/1bSOH-2nB3feFRyDEmiX81CEiWkghss3i
     and place it in AOT-GAN-for-Inpainting/experiments/
 
-    - Install the other image inpainting model:
+    - Install the other inpainting model (video), it is optional:
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
 
 8. **test commands (In order)**
-    test - contains folders with folders containing sample images each
-    sample is a sample directory containing 480p breakdance-flare in DAVIS 2016 dataset
-    sample_2 is a sample directory containing 480p surf in DAVIS 2016 dataset
+    `test` - contains folders with folders containing sample images each
+    `sample` is a sample directory containing 480p breakdance-flare in DAVIS 2016 dataset
+    `sample_2` is a sample directory containing 480p surf in DAVIS 2016 dataset
 
     ##### 1. Crop (crop.py)
     ```bash
@@ -156,8 +163,8 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     ./bulk.sh <folder> <model> <mode>
     ```
-    <folder> - contains folders that would containin sample images each
-    eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
     * ensure that the folders in 'test' do not have the same name as folders in another directory eg: 'test_2" to prevent overwriting
-    * model - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
-    * mode - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
+    * `<folder>` - contains folders that would containin sample images each
+    eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
+    * `<model>` - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
+    * `<mode>` - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
