@@ -116,33 +116,46 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
 
 8. **test commands (In order)**
+    test - contains folders with folders containing sample images each
     sample is a sample directory containing 480p breakdance-flare in DAVIS 2016 dataset
+    sample_2 is a sample directory containing 480p surf in DAVIS 2016 dataset
+
     ##### 1. Crop (crop.py)
     ```bash
-    python crop.py sample sample_processed --width 640 --height 480
+    python crop.py test/sample --width 640 --height 480
     ```
     *(no "/", sample is your folder containing raw images)
 
     ##### 2. Mask (masking.py)
     ```bash
-    python masking.py sample_processed
+    python masking.py cropped/sample
     ``` 
-    *(no "/", sample_processed is your folder containing processed images), saves to /dataset dir
+    *(no "/", sample is your folder containing processed images), saves to /dataset dir
 
     ##### 3. Inpainting (inpaiting.py)
     ```bash
-    python inpainting.py dataset/sample_processed --model e2fgvi_hq
+    python inpainting.py dataset/sample --model e2fgvi_hq
     ``` 
-    *--mode can be: ('aotgan', 'e2fgvi', 'e2fgvi_hq'), saves to result_inpaint dir
+    *--mode can be: ('aotgan', 'e2fgvi', 'e2fgvi_hq'), saves to /result_inpaint dir
 
     ##### 4. Relocating (relocating.py)
     ```bash
-    python relocating.py result_inpaint/sample_processed/e2fgvi_hq --mode 0
+    python relocating.py result_inpaint/sample/e2fgvi_hq --mode 0
     ```
-    *--mode can be integers 0, 1, 2 for: (0:'original', 1:'offset', 2:'dynamic'), saves to result dir
+    *--mode can be integers 0, 1, 2 for: (0:'original', 1:'offset', 2:'dynamic'), saves to /result dir
 
     ##### 5. Encoding (encoding.py)
     ```bash
-    python encoding.py result/sample_processed/e2fgvi_hq/original
+    python encoding.py result/sample/e2fgvi_hq/original
     ```
-    *original can be:('original', 'offset', 'dynamic'), saves to video dir
+    *original can be:('original', 'offset', 'dynamic'), saves to /video dir
+9. **master command**
+
+    ```
+    ./bulk.sh <folder> <model> <mode>
+    ```
+    <folder> - contains folders that would containin sample images each
+    eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
+    * ensure that the folders in 'test' do not have the same name as folders in another directory eg: 'test_2" to prevent overwriting
+    <model> - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
+    <mode> - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
