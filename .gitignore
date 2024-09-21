@@ -8,7 +8,6 @@
 end2end.sh
 !README.md
 !.gitignore
-!help.txt
 !crop.py
 !test/
 !test/sample/
