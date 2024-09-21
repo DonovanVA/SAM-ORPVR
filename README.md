@@ -130,11 +130,20 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     https://www.dll-files.com/cudnn64_8.dll.html#google_vignette
     place it in the
     NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
+    
     check CUDA using this command:
     ```bash
     nvcc --version
     ```
 
+    You should get:
+    ```bash
+    nvcc: NVIDIA (R) Cuda compiler driver
+    Copyright (c) 2005-2022 NVIDIA Corporation
+    Built on Tue_May__3_19:00:59_Pacific_Daylight_Time_2022
+    Cuda compilation tools, release 11.7, V11.7.64
+    Build cuda_11.7.r11.7/compiler.31294372_0
+    ```
     - download `util` file in `test clear` commit of main branch (ORPVR SHA eef6dcb39e05041e044e46141db80d37fb93d9b4)
       https://github.com/jinjungyu/ORPVR/tree/main (I included here so you dont have to)
     
