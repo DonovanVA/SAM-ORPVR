@@ -83,5 +83,5 @@ python encoding.py result/sample/e2fgvi_hq/original #('original','offset','dynam
 batch command:
 ```
 ./bulk.sh test e2fgvi_hq 0
-```
-test is your 
+``` 
+./bulk.sh DAVIS\JPEGImages\480p e2fgvi_hq 0

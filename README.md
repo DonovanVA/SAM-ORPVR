@@ -89,27 +89,59 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ### CUDAv11.7
     - CUDA https://developer.nvidia.com/cuda-toolkit
 
-    - Install correct python torch libraries for CUDA, run the commands here: (https://pytorch.org/get-started/previous-versions/)
+    - Install correct python torch CUDA-enabled libraries for CUDA, run the commands here: (https://pytorch.org/get-started/previous-versions/)
     ```bash
     conda install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 pytorch-cuda=11.7 -c pytorch -c nvidia
-     ```
-    
-    - then add in the appropriate dll files if not found (for me it was cudnn64_8.dll not found):
-        https://www.dll-files.com/cudnn64_8.dll.html#google_vignette
-        place it in the
-        NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
+    ```
 
-    - install tensorflow, you should get these versions:
-        ```bash
-        tensorflow                    2.10.1
-        torch                         2.0.0
-        torchvision                   0.15.0
-        torchaudio                    2.0.0
-        ```
+    - ^ if the above does not work and you still get a CUDA error run
+    ```bash
+    pip uninstall torch torchvision torchaudio
+    ```
+    then
+    ```bash
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+    pip install tensorflow==2.10.1
+    ```
+
+    - after installing tensorflow and CUDA-enabled torch, you should get these versions:
+    ```bash
+    tensorflow                    2.10.1
+    torch                         2.0.1+cu117
+    torchaudio                    2.0.2+cu117
+    torchvision                   0.15.2+cu117
+    ```
+
+    run the following code to check cuda:
+    ```bash
+    python cudacheck.py
+    ```
+    
+    you should get this:
+    ```bash
+    tensorflow GPU check:
+    [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+    torch GPU check:
+    True
+    GPU:NVIDIA GeForce RTX 3070
+    ```
+
+    - then add in the appropriate dll files if not found (for me it was cudnn64_8.dll not found):
+    https://www.dll-files.com/cudnn64_8.dll.html#google_vignette
+    place it in the
+    NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
+    check CUDA using this command:
+    ```bash
+    nvcc --version
+    ```
 
     - download `util` file in `test clear` commit of main branch (ORPVR SHA eef6dcb39e05041e044e46141db80d37fb93d9b4)
       https://github.com/jinjungyu/ORPVR/tree/main (I included here so you dont have to)
-
+    
+    - *If you want the cpu version only then do:
+    ```bash
+     pip install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0
+    ```
 7. **inpainting.py fix:**
     ```bash
     git clone https://github.com/MCG-NKU/E2FGVI.git
