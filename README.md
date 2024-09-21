@@ -90,6 +90,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     - CUDA https://developer.nvidia.com/cuda-toolkit
     - check your CUDA_PATH using something like echo %CUDA_PATH% or if you are using windows like me, check using edit the system environment variables -> Advanced -> Environment Variables and then you should see:
 
+![Screenshot 2024-09-21 231625](https://github.com/user-attachments/assets/26b4d499-afd6-4c33-b2c2-fd7a6d5160fd)
 
     - Install correct python torch CUDA-enabled libraries for CUDA, run the commands here: (https://pytorch.org/get-started/previous-versions/)
     ```bash
