@@ -16,76 +16,16 @@ keywords: {Computer vision;Semantic segmentation;Conferences;Videos},
     - Original repo: masking->inpainting->relocating->encoding
     - This repo: crop->masking->inpainting->relocating->encoding
 7. AOT-GAN has a poorer performance as mentioned in the paper, but it can be selected and used.
-Demo:
+8. If you are using GPU, install the relvant python GPU torch libraries (Step 1 in Setting up Guide) BEFORE installing mmcv-full, or else you will install the mmcv-full CPU version.
+
+Video Output:
 
 https://github.com/user-attachments/assets/ba2d2ad6-ed55-43d9-bd63-faac7083846a
 
 
 ### Setting Up Guide
-
-I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable
-    
-1. **Install Dependencies and DAVIS 2016 dataset:**
-
-    ```bash
-    pip install -U openmim
-    mim install mmcv-full
-    ```
-
-   - Davis Dataset: https://davischallenge.org/davis2016/code.html
-
-2. **Download the correct version of mmdetection**
-    download mmdetection v2.0
-    https://github.com/open-mmlab/mmdetection/tree/2.x
-
-    ```bash
-    cd mmdetection
-    mkdir checkpoints
-    pip install -v -e .
-    ```
-    *WARNING: DO NOT install mmcv==1.7.2 and the latest version (2.0.0+) as it will lead to keyErrors mmcv.runner and mmcv._ext module not found
-
-    Ensure you have the following versions of the packages:
-   - `mmcv-full` 1.7.2
-   - `mmdet` 2.28.2
-   - `mmengine` 0.10.4
-
-   *If you accidentally install the wrong version (probably if you install mmdetection 3.x+), uninstall the current packages and reinstall:
-
-    ```bash
-    pip uninstall mmdet
-    pip uninstall mmcv
-    pip uninstall mmcv-full
-    pip install -U openmim
-    mim install mmcv-full
-
-    cd mmdetection
-    mkdir checkpoints
-    pip install -v -e .
-    ```
-    then make sure you are using mmdetection v2.0:
-    https://github.com/open-mmlab/mmdetection/tree/2.x
-    before running 
-    
-    ```bash
-    cd mmdetection
-    mkdir checkpoints
-    pip install -v -e .
-    ```
-
-    again
-
-3. **masking.py fix (if you get AssertionError)**
-    change this in line 11
-    ```python
-    from mmdetection.mmdet.apis import inference_detector,init_detector
-    with mmdet.apis import inference_detector,init_detector
-    ```
-4. **download mask2former model**
-    download the model and put inside mmdetection/checkpoints (branch 2.0):
-    https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
-
-5. **Install the correct CUDA version (I am using 11.7)**
+I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable. Also, if you are using GPU. Remember to do step 1 first then step 2.
+1. **Install the correct CUDA version (I am using 11.7)**
     ### CUDAv11.7
     - CUDA https://developer.nvidia.com/cuda-toolkit
     - check your CUDA_PATH using something like echo %CUDA_PATH% or if you are using windows like me, check using edit the system environment variables -> Advanced -> Environment Variables and then you should see:
@@ -157,7 +97,69 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```bash
      pip install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0
     ```
-7. **inpainting.py fix:**
+
+2. **Install Dependencies and DAVIS 2016 dataset:**
+
+    ```bash
+    pip install -U openmim
+    mim install mmcv-full
+    ```
+
+   - Davis Dataset: https://davischallenge.org/davis2016/code.html
+
+3. **Download the correct version of mmdetection**
+    download mmdetection v2.0
+    https://github.com/open-mmlab/mmdetection/tree/2.x
+
+    ```bash
+    cd mmdetection
+    mkdir checkpoints
+    pip install -v -e .
+    ```
+    *WARNING: DO NOT install mmcv==1.7.2 and the latest version (2.0.0+) as it will lead to keyErrors mmcv.runner and mmcv._ext module not found
+
+    Ensure you have the following versions of the packages:
+   - `mmcv-full` 1.7.2
+   - `mmdet` 2.28.2
+   - `mmengine` 0.10.4
+
+   *If you accidentally install the wrong version (probably if you install mmdetection 3.x+), uninstall the current packages and reinstall:
+
+    ```bash
+    pip uninstall mmdet
+    pip uninstall mmcv
+    pip uninstall mmcv-full
+    pip install -U openmim
+    mim install mmcv-full
+
+    cd mmdetection
+    mkdir checkpoints
+    pip install -v -e .
+    ```
+    then make sure you are using mmdetection v2.0:
+    https://github.com/open-mmlab/mmdetection/tree/2.x
+    before running 
+    
+    ```bash
+    cd mmdetection
+    mkdir checkpoints
+    pip install -v -e .
+    ```
+
+    again
+
+4. **masking.py fix (if you get AssertionError)**
+    change this in line 11
+    ```python
+    from mmdetection.mmdet.apis import inference_detector,init_detector
+    with mmdet.apis import inference_detector,init_detector
+    ```
+5. **download mask2former model**
+    download the model and put inside mmdetection/checkpoints (branch 2.0):
+    https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
+
+
+6. **inpainting.py fix:**
     ```bash
     git clone https://github.com/MCG-NKU/E2FGVI.git
     ```
@@ -171,7 +173,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     - Install the other inpainting model (video), it is optional:
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
 
-8. **test commands (In order)**
+7. **test commands (In order)**
     `test` - contains folders with folders containing sample images each
     `sample` is a sample directory containing 480p breakdance-flare in DAVIS 2016 dataset
     `sample_2` is a sample directory containing 480p surf in DAVIS 2016 dataset
@@ -205,7 +207,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     python encoding.py result/sample/e2fgvi_hq/original
     ```
     *original can be:('original', 'offset', 'dynamic'), saves to /video dir
-9. **master command**
+8. **master command**
 
     ```
     ./bulk.sh <folder> <model> <mode>
