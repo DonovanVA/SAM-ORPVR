@@ -159,5 +159,5 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     <folder> - contains folders that would containin sample images each
     eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
     * ensure that the folders in 'test' do not have the same name as folders in another directory eg: 'test_2" to prevent overwriting
-    <model> - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
-    <mode> - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
+    * model - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
+    * mode - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
