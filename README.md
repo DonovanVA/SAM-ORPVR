@@ -88,6 +88,8 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
 5. **Install the correct CUDA version (I am using 11.7)**
     ### CUDAv11.7
     - CUDA https://developer.nvidia.com/cuda-toolkit
+    - check your CUDA_PATH using something like echo %CUDA_PATH% or if you are using windows like me, check using edit the system environment variables -> Advanced -> Environment Variables and then you should see:
+
 
     - Install correct python torch CUDA-enabled libraries for CUDA, run the commands here: (https://pytorch.org/get-started/previous-versions/)
     ```bash
@@ -130,7 +132,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     https://www.dll-files.com/cudnn64_8.dll.html#google_vignette
     place it in the
     NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin
-    
+
     check CUDA using this command:
     ```bash
     nvcc --version
