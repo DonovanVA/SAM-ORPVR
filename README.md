@@ -79,9 +79,11 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     download the model and put inside mmdetection/checkpoints (branch 2.0):
     https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
 
-5. **Install the correct CUDA version (I am using 11.7x)**
+5. **Install the correct CUDA version (I am using 11.7)**
     ### CUDAv11.7
-    - Run the command (https://pytorch.org/get-started/previous-versions/)
+    - CUDA https://developer.nvidia.com/cuda-toolkit
+
+    - Install correct python torch libraries for CUDA, run the commands here: (https://pytorch.org/get-started/previous-versions/)
     ```bash
     conda install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 pytorch-cuda=11.7 -c pytorch -c nvidia
      ```
