@@ -1,9 +1,8 @@
 # Updated ORPVR Installation and Usage Guide
 Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has been outdated and does not have any version checking so this repo will help to find and explain the required libraries (and versions) especially those facing issues with mmcv and mmdet
 
-Research paper:
-J. -G. Jin, J. Bae, H. -G. Baek and S. -H. Park, "Object-Ratio-Preserving Video Retargeting Framework based on Segmentation and Inpainting," 2023 IEEE/CVF Winter Conference on Applications of Computer Vision Workshops (WACVW), Waikoloa, HI, USA, 2023, pp. 497-503, doi: 10.1109/WACVW58289.2023.00055.
-keywords: {Computer vision;Semantic segmentation;Conferences;Videos},
+###Research paper:
+###J. -G. Jin, J. Bae, H. -G. Baek and S. -H. Park, "Object-Ratio-Preserving Video Retargeting Framework based on Segmentation and Inpainting," 2023 IEEE/CVF Winter Conference on Applications of Computer Vision Workshops (WACVW), Waikoloa, ###HI, USA, 2023, pp. 497-503, doi: 10.1109/WACVW58289.2023.00055.
 
 ## Notes/Precautions:
 #### After hours of finding the correct version, I discovered these key changes and important precautions to take when installing:
