@@ -151,8 +151,9 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     - download `util` file in `test clear` commit of main branch (ORPVR SHA eef6dcb39e05041e044e46141db80d37fb93d9b4)
       https://github.com/jinjungyu/ORPVR/tree/main (I included here so you dont have to)
-    
-    - *If you want the cpu version only then do:
+
+    ### CPU only
+    - If you want the cpu version only then do:
     ```bash
      pip install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0
     ```
