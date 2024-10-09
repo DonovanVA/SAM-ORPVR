@@ -204,7 +204,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     │   │   │   ├── mask_0002.png
     │   │   │   └── ...
     ```
-    Your folder must include a /Annotations/ subdirectory containing the predetermined masks if you want to use mode 1 
+    Your folder must include a `.../Annotations/` subdirectory like shown above containing the predetermined masks if you want to use mode 1
         
     ##### 1. Crop (crop.py)
     ```bash
