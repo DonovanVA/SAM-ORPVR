@@ -159,6 +159,8 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
 
 
 6. **inpainting.py fix:**
+    For inpainting, we will standardise to `E2FGVI` as it is stated to be more accurate by the research paper
+    In main directory, Install `E2FGVI` and `AOT-GAN-for-Inpainting`:
     ```bash
     git clone https://github.com/MCG-NKU/E2FGVI.git
     ```
@@ -210,9 +212,9 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     python encoding.py result/bmx-bumps/e2fgvi_hq/original
     ```
     *original can be:('original', 'offset', 'dynamic'), saves to /video/bmx-bumps dir
-    
+
 8. **Master command (bulk.sh)**
-    This master command is to excellently wrap around all of the previous commands in one .sh file,
+    This master command is to elegantly wrap around all of the previous commands in one .sh file,
     ```bash
     ./bulk.sh <folder> <model> <mode> [--no-mask-model]
     ```
