@@ -178,14 +178,41 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     `DAVIS-test` - contains folders with folders containing sample images from the 480p DAVIS 2016 dataset each:
         -bmx-bumps
         -bmx-trees
-
+    Tree view:
+    ```bash
+    DAVIS-test/
+    │
+    ├── JPEGImages/
+    │   ├── 480p/
+    │   │   ├── bmx-bumps/
+    │   │   │   ├── image_0001.jpg
+    │   │   │   ├── image_0002.jpg
+    │   │   │   └── ...
+    │   │   ├── bmx-trees/
+    │   │   │   ├── image_0001.jpg
+    │   │   │   ├── image_0002.jpg
+    │   │   │   └── ...
+    │
+    ├── Annotations/
+    │   ├── 480p/
+    │   │   ├── bmx-bumps/
+    │   │   │   ├── mask_0001.png
+    │   │   │   ├── mask_0002.png
+    │   │   │   └── ...
+    │   │   ├── bmx-trees/
+    │   │   │   ├── mask_0001.png
+    │   │   │   ├── mask_0002.png
+    │   │   │   └── ...
+    ```
+    Your folder must include a /Annotations/ subdirectory containing the predetermined masks if you want to use mode 1 
+        
     ##### 1. Crop (crop.py)
     ```bash
     python crop.py DAVIS-test/JPEGImages/480p/bmx-bumps --width 640 --height 480 --mode 0
     ```
     *(no "/", sample is your folder containing raw images)
     `--mode 0` crops the images in `DAVIS-test/JPEGImages/480p/bmx-bump/` and saves in `cropped/bmx-bumps/`
-    `--mode 1` crops the masks in `DAVIS-test/Annotations/.../bmx-bumps/` and stores it in `dataset/bmx-bumps/masks/` directory, also moves cropped images from `cropped/bmx-bumps/` to `dataset/bmx-bumps/images/`
+    `--mode 1` (Requires Step 1. mode 0 to be executed first) crops the masks in `DAVIS-test/Annotations/.../bmx-bumps/` and stores it in `dataset/bmx-bumps/masks/` directory, also moves cropped images from `cropped/bmx-bumps/` to `dataset/bmx-bumps/images/`
 
     ##### 2. Mask (masking.py)
     ```bash

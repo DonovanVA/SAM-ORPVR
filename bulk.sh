@@ -62,7 +62,7 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
     echo "Running crop.py on $SAMPLE_NAME..."
     python crop.py "$SAMPLE_NAME" --width 640 --height 480 --mode 0
 
-    # Step 2: Run masking only if --no-mask-model flag is NOT provided
+    # Step 2: Run masking and any preprocessing step depending --no-mask-model flag
     if [ "$NO_MASK_MODEL" -eq 1 ]; then
         echo "No mask model is selected, cropping mask..."
         python crop.py "$ANNOTATION_NAME" --width 640 --height 480 --mode 1
