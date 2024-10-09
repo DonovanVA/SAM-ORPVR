@@ -153,7 +153,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     from mmdetection.mmdet.apis import inference_detector,init_detector
     with mmdet.apis import inference_detector,init_detector
     ```
-5. **download mask2former model**
+5. **Download mask2former model**
     download the model and put inside mmdetection/checkpoints (branch 2.0):
     https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
 
@@ -174,7 +174,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     - Install the other inpainting model (video), it is optional:
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
 
-7. **test commands (In order)**
+7. **Test commands (In order)**
     `DAVIS-test` - contains folders with folders containing sample images from the 480p DAVIS 2016 dataset each:
         -bmx-bumps
         -bmx-trees
