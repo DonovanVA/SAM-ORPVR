@@ -7,6 +7,7 @@ parser.add_argument('--dstdir', default='dataset', help='mask save dir')
 parser.add_argument('--score-thr', type=float, default=0.3, help='bbox score threshold')
 parser.add_argument('--area-thr', type=float, default=0.01, help='object area threshold')
 parser.add_argument('--device', type=str, default=None, help='cpu or cuda')
+parser.add_argument('--mode', type=int, default=0, help='0: with model, 1: no model')
 # ----------------------------------
 args = parser.parse_args()
 

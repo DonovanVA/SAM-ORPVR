@@ -9,11 +9,9 @@ end2end.sh
 !README.md
 !.gitignore
 !crop.py
-!test/
-!test/sample/
-!test/sample/**/*.jpg
-!test/sample_2/
-!test/sample_2/**/*.jpg
+!DAVIS-test/
+!DAVIS-test/**
 !util
 !util/**/*.py
 !bulk.sh
+!cudacheck.py
