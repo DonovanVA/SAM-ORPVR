@@ -33,6 +33,16 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
 
     under system variables, if not add a new CUDA_PATH and CUDA_PATH_V11_7 
 
+    - Create a new conda environment (python 3.9.x)
+    ```bash
+    conda create -n SAM-ORPVR python=3.9
+    ```
+
+    - Activate the new environment
+    ```bash
+    conda activate SAM-ORPVR
+    ```
+
     - Install correct python torch CUDA-enabled libraries for CUDA, run the commands here: (https://pytorch.org/get-started/previous-versions/)
     ```bash
     conda install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 pytorch-cuda=11.7 -c pytorch -c nvidia
@@ -94,16 +104,15 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
 
 2. **Install Dependencies and DAVIS 2016 dataset:**
-
+    - Install openmim
     ```bash
     pip install -U openmim
     mim install mmcv-full
     ```
 
-   - Davis Dataset: https://davischallenge.org/davis2016/code.html
+    - Davis Dataset: https://davischallenge.org/davis2016/code.html
 
-3. **Download the correct version of mmdetection**
-    download mmdetection v2.0
+    - Download mmdetection v2.0
     https://github.com/open-mmlab/mmdetection/tree/2.x
 
     ```bash
@@ -142,25 +151,23 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     again
 
-    Also install other dependencies `numpy==1.24.3` in requirement.txt file by typing:
+    then install the correct version of numpy `numpy==1.24.3`:
     ```bash
     pip install -r requirements.txt
     ```
 
-
-
-4. **masking.py fix (if you get AssertionError)**
+3. **masking.py fix (if you get AssertionError)**
     change this in line 11
     ```python
     from mmdetection.mmdet.apis import inference_detector,init_detector
     with mmdet.apis import inference_detector,init_detector
     ```
-5. **Download mask2former model**
+4. **Download mask2former model**
     download the model and put inside mmdetection/checkpoints (branch 2.0):
     https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
 
 
-6. **inpainting.py fix:**
+5. **inpainting.py fix:**
     For inpainting, we will standardise to `E2FGVI` as it is stated to be more accurate by the research paper
     In main directory, Install `E2FGVI` and `AOT-GAN-for-Inpainting`:
     ```bash
@@ -176,7 +183,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     - Install the other inpainting model (video), it is optional:
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
 
-7. **Test commands (In order)**
+6. **Test commands (In order)**
     `DAVIS-test` - contains folders with folders containing sample images from the 480p DAVIS 2016 dataset each:
         -bmx-bumps
         -bmx-trees
@@ -242,7 +249,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     *original can be:('original', 'offset', 'dynamic'), saves to /video/bmx-bumps dir
 
-8. **Master command (bulk.sh)**
+7. **Master command (bulk.sh)**
     This master command is to elegantly wrap around all of the previous commands in one .sh file,
     ```bash
     ./bulk.sh <folder> <model> <mode> [--no-mask-model]
