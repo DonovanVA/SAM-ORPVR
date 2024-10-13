@@ -45,12 +45,10 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     then
     ```bash
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
-    pip install tensorflow==2.10.1
     ```
 
     - after installing tensorflow and CUDA-enabled torch, you should get these versions:
     ```bash
-    tensorflow                    2.10.1
     torch                         2.0.1+cu117
     torchaudio                    2.0.2+cu117
     torchvision                   0.15.2+cu117
