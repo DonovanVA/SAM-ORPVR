@@ -103,7 +103,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
      pip install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0
     ```
 
-2. **Install Dependencies and DAVIS 2016 dataset:**
+2. **Install Dependencies and DAVIS 2016 dataset (Order is important, FOLLOW carefully):**
     - Install openmim
     ```bash
     pip install -U openmim
@@ -151,23 +151,31 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     again
 
-    then install the correct version of numpy `numpy==1.24.3`:
+    then install the correct version of numpy `numpy==1.23.2` and `supervision`:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. **masking.py fix (if you get AssertionError)**
-    change this in line 11
-    ```python
-    from mmdetection.mmdet.apis import inference_detector,init_detector
-    with mmdet.apis import inference_detector,init_detector
+
+3. **mask2former Model**
+    - Download mask2former model and put inside `mmdetection/checkpoints` (branch 2.0): https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
+
+4. **SAM Model**:
+    ```bash
+    mkdir SAM
+    cd SAM
+    mkdir checkpoints
     ```
-4. **Download mask2former model**
-    download the model and put inside mmdetection/checkpoints (branch 2.0):
-    https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
+    - Install segment anything
 
+    ```bash
+    pip install git+https://github.com/facebookresearch/segment-anything.git
+    ```
 
-5. **inpainting.py fix:**
+    - Download SAM model and put inside `SAM/checkpoints` : https://github.com/facebookresearch/segment-anything?tab=readme-ov-file#model-checkpoints
+    *I am using `vit_h`, options are `vit_h`,`vit_l`,`vit_b`
+    Note: Requires device spec
+5. **Inpainting Model**
     For inpainting, we will standardise to `E2FGVI` as it is stated to be more accurate by the research paper
     In main directory, Install `E2FGVI` and `AOT-GAN-for-Inpainting`:
     ```bash
@@ -182,8 +190,14 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
 
     - Install the other inpainting model (video), it is optional:
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
+6. **masking.py fix (if you get AssertionError)**
+    change this in line 11
+    ```python
+    from mmdetection.mmdet.apis import inference_detector,init_detector
+    with mmdet.apis import inference_detector,init_detector
+    ```
 
-6. **Test commands (In order)**
+7. **Test commands (In order)**
     `DAVIS-test` - contains folders with folders containing sample images from the 480p DAVIS 2016 dataset each:
         -bmx-bumps
         -bmx-trees
@@ -249,7 +263,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     *original can be:('original', 'offset', 'dynamic'), saves to /video/bmx-bumps dir
 
-7. **Master command (bulk.sh)**
+8. **Master command (bulk.sh)**
     This master command is to elegantly wrap around all of the previous commands in one .sh file,
     ```bash
     ./bulk.sh <folder> <model> <mode> [--no-mask-model]

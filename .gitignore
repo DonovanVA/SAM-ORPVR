@@ -15,3 +15,4 @@ end2end.sh
 !util/**/*.py
 !bulk.sh
 !cudacheck.py
+!segment-anything.py
