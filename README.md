@@ -61,8 +61,6 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     
     you should get this:
     ```bash
-    tensorflow GPU check:
-    [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
     torch GPU check:
     True
     GPU:NVIDIA GeForce RTX 3070
@@ -142,8 +140,14 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     mkdir checkpoints
     pip install -v -e .
     ```
-
     again
+
+    Also install other dependencies `numpy==1.24.3` in requirement.txt file by typing:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+
 
 4. **masking.py fix (if you get AssertionError)**
     change this in line 11
