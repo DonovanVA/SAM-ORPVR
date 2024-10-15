@@ -175,6 +175,24 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     - Download SAM model and put inside `SAM/checkpoints` : https://github.com/facebookresearch/segment-anything?tab=readme-ov-file#model-checkpoints
     *I am using `vit_h`, options are `vit_h`,`vit_l`,`vit_b`
     Note: Requires device spec
+
+
+    SAM2:
+    ```bash
+    git clone https://github.com/facebookresearch/sam2.git
+    cd sam2
+    ```
+    * Override from movetosam2-override
+    ```bash
+    pip install -e ".[notebooks]"
+    python setup.py build_ext --inplace
+    ```
+    Also, we use python `3.9.x` here because it works with E2FGVI and mask2former (the previous set up), the 3.10.x suggested by Meta is only for accelerated computing
+    https://github.com/facebookresearch/sam2/blob/main/INSTALL.md
+    ```bash
+    C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
+command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc.exe' failed with exit code 2
+    ```
 5. **Inpainting Model**
     For inpainting, we will standardise to `E2FGVI` as it is stated to be more accurate by the research paper
     In main directory, Install `E2FGVI` and `AOT-GAN-for-Inpainting`:

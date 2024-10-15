@@ -16,3 +16,5 @@ end2end.sh
 !bulk.sh
 !cudacheck.py
 !segment-anything.py
+!segment-anything-2.py
+!movetosam2-override
