@@ -18,3 +18,4 @@ end2end.sh
 !segment-anything.py
 !segment-anything-2.py
 !movetosam2-override
+!movetosam2-override/**
