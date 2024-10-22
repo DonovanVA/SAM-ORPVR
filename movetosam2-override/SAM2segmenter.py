@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import Label, Button, Text
 import cv2
 from sam2.build_sam import build_sam2_video_predictor
-
+import matplotlib.pyplot as plt
 class SAM2segmenterUI:
     def __init__(self, points, labels, model_cfg, video_dir, checkpoint):
         self.points = points
@@ -63,7 +63,7 @@ class SAM2segmenterUI:
         self.img_mask.image = black_background
 
     def highlight_segments(self):
-        self.predictor.reset_state(self.inference_state)
+        #self.predictor.reset_state(self.inference_state)
         np_points = np.array(self.points, dtype=np.float32)
         np_labels = np.array(self.labels, dtype=np.int32)
 
@@ -129,6 +129,38 @@ class SAM2segmenterUI:
       self.points.clear()  # Reset points for each frame
       self.labels.clear()
       self.render_frame()
+
+    def play(self):
+      ## End the tkinter application and begin generating the video
+      # Get the parent directory of the current script (Repo)
+      parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+      output_dir = os.path.join(parent_dir, "output")
+      # Create the output directory if it doesn't exist
+      if not os.path.exists(output_dir):
+          os.makedirs(output_dir)
+      self.close_app()
+      video_segments={}
+      for out_frame_idx,out_obj_ids,out_mask_logits in self.predictor.propagate_in_video(self.inference_state):
+         video_segments[out_frame_idx]={
+            out_obj_id:(out_mask_logits[i]>0.0).cpu().numpy() 
+            for i, out_obj_id in enumerate(out_obj_ids)
+         }
+      vis_frame_stride = 1
+      fig = plt.figure(figsize=(6,4))
+      print(video_segments)
+      ## buggy part of the
+      for out_frame_idx in range(0,len(self.frame_names),vis_frame_stride):
+        im = plt.imshow(Image.open(os.path.join(video_dir,self.frame_names[out_frame_idx])),animated=True)
+        for out_obj_id,out_mask in video_segments[out_frame_idx].items():
+            cmap=plt.get_cmap("tab10")
+            cmap_idx=0 if out_obj_id is None else out_obj_id
+            color=np.array([*cmap(cmap_idx)[:3],0.6])
+            h,w=out_mask.shape[:2]
+            mask_image=out_mask.reshape(h,w,1)*color.reshape(1,1,-1)
+            plt.gca().ax.imshow(mask_image)
+        plt.savefig(os.path.join(output_dir, f"s{out_frame_idx}.png"))
+
+    
     def reset_frame(self):
        print("reset!")
     def run(self):
@@ -137,12 +169,15 @@ class SAM2segmenterUI:
       next_button = Button(self.root, text="Next Frame", command=self.next_frame)
       reset_button = Button(self.root, text="Reset Frame", command=self.reset_frame)
       prev_button = Button(self.root, text="Previous Frame", command=self.prev_frame)
+      play_button = Button(self.root, text="Play", command=self.play)
+      play_button.grid(row=1, column=3)
       next_button.grid(row=1, column=2)
       reset_button.grid(row=1, column=1)
       prev_button.grid(row=1, column=0)
-
       self.root.mainloop()
-
+    def close_app(self):
+      self.root.quit()  # This will exit the main loop and close the app
+      self.root.destroy()  # This ensures that the Tkinter window is properly destroyed
 # Define the paths
 current_dir = os.getcwd()
 checkpoint = os.path.join(current_dir, "sam2", "checkpoints", "sam2.1_hiera_large.pt")
