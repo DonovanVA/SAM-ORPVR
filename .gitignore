@@ -19,3 +19,4 @@ end2end.sh
 !segment-anything-2.py
 !movetosam2-override
 !movetosam2-override/**
+!cropAndSAM.sh
