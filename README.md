@@ -30,14 +30,17 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     - check your CUDA_PATH using something like echo %CUDA_PATH% or if you are using windows like me, check using edit the system environment variables -> Advanced -> Environment Variables and then you should see:
 
     ![Screenshot 2024-09-21 231625](https://github.com/user-attachments/assets/26b4d499-afd6-4c33-b2c2-fd7a6d5160fd)
-
     under system variables, if not add a new CUDA_PATH and CUDA_PATH_V11_7 
-
     - Create a new conda environment (python 3.9.x)
     ```bash
     conda create -n SAM-ORPVR python=3.9
     ```
-
+    
+    - (For windows): If you are unable to switch the CUDA environment freely or see the conda version `(SAM-ORPVR) PS C:\Users\User...>`, run the following command below as `administrator`
+    ```bash
+    Set-ExecutionPolicy RemoteSigned
+    ```
+    
     - Activate the new environment
     ```bash
     conda activate SAM-ORPVR
@@ -151,7 +154,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     again
 
-    then install the correct version of numpy `numpy==1.23.2` and `supervision`:
+    then install the necessary libraries:
     ```bash
     pip install -r requirements.txt
     ```
@@ -176,19 +179,17 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     *I am using `vit_h`, options are `vit_h`,`vit_l`,`vit_b`
     Note: Requires device spec
 
-
     SAM2:
+    * Install SAM2
     ```bash
     git clone https://github.com/facebookresearch/sam2.git
     cd sam2
     ```
-    * Override from movetosam2-override
-    ```bash
-    pip install -e ".[notebooks]"
-    python setup.py build_ext --inplace
-    ```
-    Also, we use python `3.9.x` here because it works with E2FGVI and mask2former (the previous set up), the 3.10.x suggested by Meta is only for accelerated computing
+
+    * Also, we use python `3.9.x` here because it works with E2FGVI and mask2former (the previous set up), the 3.10.x suggested by Meta is only for accelerated computing
     https://github.com/facebookresearch/sam2/blob/main/INSTALL.md
+
+    * The error below occurs if you dont have desktop environment for C++ installed (recommend to install it through microsoft visual studio)
     ```bash
     C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
 command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc.exe' failed with exit code 2
@@ -284,20 +285,60 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 8. **Master command (bulk.sh)**
     This master command is to elegantly wrap around all of the previous commands in one .sh file,
     ```bash
-    ./bulk.sh <folder> <model> <mode> [--no-mask-model]
+    ./bulk.sh <folder> <model> <mode> [--no-mask-model] [--inpaint-only]
     ```
     * `<folder>` - contains folders that would containin sample images each `DAVIS-test/JPEGImages/480p/**/**(.jpg)`
     eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
     * `<model>` - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
     * `<mode>` - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
     * `--no-mask-model` is a flag to set whenever you want to use a segmentation model (in this case its mask2former)
+    
+    Example:
+    - Run without `mask2former` model:
+    ```bash 
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model
+    ```
+    - Run with `mask2former` model:
+    ```bash
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0
+    ```
+    - Run with inpaint only:
+    ```bash
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
+    ```
+
+    (OPTIONAL STEP) Convert MP4 to mov
+    ```bash
+    python mp4tomov.py
+    ```
+
+9. **App to Generate masks from SAM2**
+    This app generates masks from SAM2, requires manual input
+    ```bash
+    cp -f "movetosam2-override/SAM2segmenter.py" "sam2/SAM2segmenter.py"
+    python sam2/SAM2segmenter.py <video_parent_dir>
+    ```
+    * where `<video_parent_dir>` contains folders of images each
 
     Example:
-    - Run without mask2former model:
-    ```bash 
-    `./bulk.sh C:\Users\donov\Desktop\FYP\ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model`
-    ```
-    - Run with mask2former model:
     ```bash
-    `./bulk.sh C:\Users\donov\Desktop\FYP\ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0`
+    cp -f "movetosam2-override/SAM2segmenter.py" "sam2/SAM2segmenter.py"
+    python sam2/SAM2segmenter.py C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
+    ```
+
+10. **Run SAM2 + Crop, then inpaint only**
+    To test the flow using SAM2 and inpainting, follow the steps below:
+    1. Crop the images then run sam2 on it
+    ```bash
+    ./cropAndSAM.sh <video_parent_dir>
+    ```
+    2. Run bulk.sh with only inpainting
+    ```bash
+    ./bulk.sh <video_parent_dir> e2fgvi_hq 0 --inpaint-only
+    ```
+
+    Example:
+    ```bash
+    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
     ```

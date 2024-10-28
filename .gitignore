@@ -1,6 +1,6 @@
 *
 !util
-!requirement.txt
+!requirements.txt
 !inpainting.py
 !masking.py
 !relocating.py
