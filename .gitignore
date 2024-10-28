@@ -20,3 +20,4 @@ end2end.sh
 !movetosam2-override
 !movetosam2-override/**
 !cropAndSAM.sh
+!mp4tomov.py
