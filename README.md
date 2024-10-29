@@ -308,7 +308,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
     (OPTIONAL STEP) Convert MP4 to mov
     ```bash
-    python mp4tomov.py <parent folder> <Target folder>
+    python mp4tomov.py video videoMOV
     ```
 
 9. **App to Generate masks from SAM2**
@@ -369,6 +369,10 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
     ```bash
     python encodingHarmonized.py harmonize/bmx-trees/harmonized
+    ```
+    (OPTIONAL STEP) Convert MP4 to mov
+    ```bash
+    python mp4tomov.py videoHarmonized videoHarmonizedMOV
     ```
 11. **workflows**
 
