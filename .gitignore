@@ -21,3 +21,6 @@ end2end.sh
 !movetosam2-override/**
 !cropAndSAM.sh
 !mp4tomov.py
+!encodingHarmonized.py
+!prepforharmonizer.py
+!add_harmonization.sh

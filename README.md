@@ -292,7 +292,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     * `<model>` - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
     * `<mode>` - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
     * `--no-mask-model` is a flag to set whenever you want to use a segmentation model (in this case its mask2former)
-    
+    * `--inpaint-only` to use inpainting network only
     Example:
     - Run without `mask2former` model:
     ```bash 
@@ -306,10 +306,9 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```bash
     ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
     ```
-
     (OPTIONAL STEP) Convert MP4 to mov
     ```bash
-    python mp4tomov.py
+    python mp4tomov.py <parent folder>
     ```
 
 9. **App to Generate masks from SAM2**
@@ -341,4 +340,31 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```bash
     ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
     ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
+    ```
+11. **Harmonizer**
+    - Move to harmonizer
+    ```bash
+    python prepforharmonizer.py x --mode 0
+    ```
+    - run the harmonizer
+    ```bash
+    cd Harmonizer
+    python -m demo.image_harmonization.run --example-path ..<Path to folder containing mask and composite sub directory>
+    cd ..                           
+    ```
+    - run encoding
+    ```bash
+    python encodingHarmonized.py <harmonized folder in path to folder containing mask and composite sub directory>
+    ```
+    Example:
+    ```bash
+    python prepforharmonizer.py x --mode 0
+    ```
+    ```bash
+    cd Harmonizer
+    python -m demo.image_harmonization.run --example-path ../harmonize/bmx-trees/
+    cd ..                           
+    ```
+    ```bash
+    python encodingHarmonized.py harmonize/bmx-trees/harmonized
     ```

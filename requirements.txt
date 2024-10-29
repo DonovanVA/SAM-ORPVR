@@ -6,3 +6,5 @@ pillow>=9.4.0
 opencv-python
 matplotlib
 moviepy
+scikit-image
+kornia
