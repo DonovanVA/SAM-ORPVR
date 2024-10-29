@@ -308,7 +308,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
     (OPTIONAL STEP) Convert MP4 to mov
     ```bash
-    python mp4tomov.py <parent folder>
+    python mp4tomov.py <parent folder> <Target folder>
     ```
 
 9. **App to Generate masks from SAM2**
