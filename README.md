@@ -396,3 +396,13 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
     ./add_harmonization.sh
     ```
+    when resetting please select only these files:
+    - harmonize
+    - cropped
+    - dataset
+    - result
+    - result_inpaint
+    - video
+    - videoHarmonized
+    - videoHarmonizedMOV
+    - videoMOV
