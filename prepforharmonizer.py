@@ -5,18 +5,15 @@ import json
 from glob import glob
 from tqdm import tqdm
 import torch
-from util.option_relocate import Relocator
 import torchvision.transforms as transforms
 from PIL import Image
-def relocate_objects_and_save_mask(imgdir, objdir, resultdir, mode='original'):
+from util.option_relocate import args, Relocator
+def relocate_objects_and_save_mask(imgdir, objdir, resultdir, mode=args.mode):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     modes = ['original', 'offset', 'dynamic']
     mode_idx = modes.index(mode) if mode in modes else 0
 
     # Initialize Relocator with args configuration
-    class Args:
-        pass
-    args = Args()
     args.device = device
     args.mode = mode_idx
 
@@ -79,9 +76,9 @@ def resize_image_opencv(image_tensor, new_width, new_height):
     resized_image_tensor = transforms.ToTensor()(resized_image_np)
     return resized_image_tensor
 
-def copy_images_and_masks(source_base_path, destination_base_path, masks_base_path):
-    for foldernameA in os.listdir(source_base_path):
-        folderA_path = os.path.join(source_base_path, foldernameA)
+def copy_images_and_masks(destination_base_path, masks_base_path):
+    for foldernameA in os.listdir(args.src):
+        folderA_path = os.path.join(args.src, foldernameA)
         if os.path.isdir(folderA_path):
             for foldernameB in os.listdir(folderA_path):
                 folderB_path = os.path.join(folderA_path, foldernameB)
@@ -119,10 +116,10 @@ def copy_images_and_masks(source_base_path, destination_base_path, masks_base_pa
                             print(f"Copied and resized images to: {destination_images_path}")
                             print(f"Copied and resized masks to: {destination_masks_path}")
 
-source_base_path = 'result/'
+#source_base_path = 'result/'
 destination_base_path = 'harmonize/'
 masks_base_path = 'dataset/'
 
-copy_images_and_masks(source_base_path, destination_base_path, masks_base_path)
+copy_images_and_masks(destination_base_path, masks_base_path)
 
 

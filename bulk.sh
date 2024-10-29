@@ -109,3 +109,4 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
 done
 
 echo "Pipeline execution completed for all directories."
+sleep 3

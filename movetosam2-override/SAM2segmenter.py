@@ -160,46 +160,50 @@ class SAM2segmenterUI:
             for i, out_obj_id in enumerate(out_obj_ids)
          }
       vis_frame_stride = 1
+      #print("Generated frame indices:", list(video_segments.keys()))
       for out_frame_idx in range(0, len(self.frame_names), vis_frame_stride):
         # Load the current frame as background
-        for out_obj_id, out_mask in video_segments[out_frame_idx].items():
-          # Ensure mask is 2D (height, width)
-          if out_mask.ndim == 3 and out_mask.shape[0] == 1:
-              out_mask = out_mask.squeeze(0)  # Convert to shape (h, w)
-          # Convert mask to Image and resize to match frame
-          mask_image = Image.fromarray((out_mask * 255).astype("uint8"))
-          mask_image = ImageOps.colorize(mask_image, black="black", white="white").convert("RGBA")
-        # Save frame with overlayed mask
-        mask_image.save(os.path.join(masks_output_dir, f"{str(out_frame_idx).zfill(5)}.png"))
-    
-        objects = {'box': [], 'coor': []}
-        # Create a binary mask from the predefined mask
-        mask_binary = (out_mask > 0).astype(np.uint8)
-        contours, _ = cv2.findContours(mask_binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        for contour in contours:
-            # Get bounding box coordinates
-            x, y, w, h = cv2.boundingRect(contour)
-            objects['box'].append([int(x), int(y), int(x + w), int(y + h)])
+        if out_frame_idx in video_segments:
+          for out_obj_id, out_mask in video_segments[out_frame_idx].items():
+            # Ensure mask is 2D (height, width)
+            if out_mask.ndim == 3 and out_mask.shape[0] == 1:
+                out_mask = out_mask.squeeze(0)  # Convert to shape (h, w)
+            # Convert mask to Image and resize to match frame
+            mask_image = Image.fromarray((out_mask * 255).astype("uint8"))
+            mask_image = ImageOps.colorize(mask_image, black="black", white="white").convert("RGBA")
+          # Save frame with overlayed mask
+          mask_image.save(os.path.join(masks_output_dir, f"{str(out_frame_idx).zfill(5)}.png"))
+      
+          objects = {'box': [], 'coor': []}
+          # Create a binary mask from the predefined mask
+          mask_binary = (out_mask > 0).astype(np.uint8)
+          contours, _ = cv2.findContours(mask_binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+          for contour in contours:
+              # Get bounding box coordinates
+              x, y, w, h = cv2.boundingRect(contour)
+              objects['box'].append([int(x), int(y), int(x + w), int(y + h)])
 
-            # Create a mask for the current contour and fill it to get internal pixels
-            filled_contour_mask = np.zeros(mask_binary.shape, dtype=np.uint8)
-            cv2.drawContours(filled_contour_mask, [contour], -1, 255, thickness=-1)  # Fill the contour
-            
-            # Get all non-zero points inside the filled contour (everything inside the contour)
-            internal_points = np.column_stack(np.where(filled_contour_mask > 0))
+              # Create a mask for the current contour and fill it to get internal pixels
+              filled_contour_mask = np.zeros(mask_binary.shape, dtype=np.uint8)
+              cv2.drawContours(filled_contour_mask, [contour], -1, 255, thickness=-1)  # Fill the contour
+              
+              # Get all non-zero points inside the filled contour (everything inside the contour)
+              internal_points = np.column_stack(np.where(filled_contour_mask > 0))
 
-            # Convert to [y, x] format
-            internal_points = [[int(pt[0]), int(pt[1])] for pt in internal_points]
-            objects['coor'].append(internal_points)
+              # Convert to [y, x] format
+              internal_points = [[int(pt[0]), int(pt[1])] for pt in internal_points]
+              objects['coor'].append(internal_points)
 
-        # Sort the boxes and coordinates based on the top-left corner (y, x)
-        sorted_indices = sorted(range(len(objects['box'])), key=lambda i: (objects['box'][i][1], objects['box'][i][0]))
+          # Sort the boxes and coordinates based on the top-left corner (y, x)
+          sorted_indices = sorted(range(len(objects['box'])), key=lambda i: (objects['box'][i][1], objects['box'][i][0]))
 
-        objects['box'] = [objects['box'][i] for i in sorted_indices]
-        objects['coor'] = [objects['coor'][i] for i in sorted_indices]
-        fname = os.path.splitext(os.path.basename(str(out_frame_idx).zfill(5)))[0]
-        with open(os.path.join(objects_output_dir, fname + '.json'), "w") as f:
-            json.dump(objects, f)
+          objects['box'] = [objects['box'][i] for i in sorted_indices]
+          objects['coor'] = [objects['coor'][i] for i in sorted_indices]
+          fname = os.path.splitext(os.path.basename(str(out_frame_idx).zfill(5)))[0]
+          with open(os.path.join(objects_output_dir, fname + '.json'), "w") as f:
+              json.dump(objects, f)
+        else:
+          print(f"Warning: Frame index {out_frame_idx} not found in video_segments")
 
     def reset_frame(self):
       print("reset!")
@@ -211,14 +215,14 @@ class SAM2segmenterUI:
     def run(self):
       self.read_from_vid_dir(self.video_dir)
       self.render_frame()
-      next_button = Button(self.root, text="Next Frame", command=self.next_frame)
+      #next_button = Button(self.root, text="Next Frame", command=self.next_frame)
       reset_button = Button(self.root, text="Reset Frame", command=self.reset_frame)
-      prev_button = Button(self.root, text="Previous Frame", command=self.prev_frame)
+      #prev_button = Button(self.root, text="Previous Frame", command=self.prev_frame)
       play_button = Button(self.root, text="Play", command=self.play)
       play_button.grid(row=2, column=3)
-      next_button.grid(row=2, column=2)
+      #next_button.grid(row=2, column=2)
       reset_button.grid(row=2, column=1)
-      prev_button.grid(row=2, column=0)
+      #prev_button.grid(row=2, column=0)
       self.root.mainloop()
 
     def close_app(self):

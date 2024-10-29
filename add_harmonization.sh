@@ -8,7 +8,7 @@ fi
 
 # Prepare for harmonizer
 echo "Running prepforharmonizer.py to prepare for harmonization..."
-python prepforharmonizer.py x --mode 0
+python prepforharmonizer.py result --mode 0
 
 # Navigate to the harmonized directories and run harmonization
 for HARMONIZE_DIR in harmonize/*/; do  # The trailing slash ensures we only get directories
@@ -29,7 +29,8 @@ for HARMONIZE_DIR in harmonize/*/; do  # The trailing slash ensures we only get 
     python encodingHarmonized.py "${HARMONIZE_DIR}harmonized"
 
     # Optional delay between iterations
-    sleep 2  # Adjust the delay as needed
+    echo "Completed harmonisation for ${HARMONIZE_DIR}harmonized...proceeding to the next image set"
 done
 
 echo "Harmonization process completed for all directories."
+sleep 3

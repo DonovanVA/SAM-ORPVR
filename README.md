@@ -325,7 +325,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     python sam2/SAM2segmenter.py C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
     ```
 
-10. **Run SAM2 + Crop, then inpaint only**
+    (Using bash) Run SAM2 + Crop, then inpaint only**
     To test the flow using SAM2 and inpainting, follow the steps below:
     1. Crop the images then run sam2 on it
     ```bash
@@ -341,24 +341,26 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
     ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
     ```
-11. **Harmonizer**
-    - Move to harmonizer
+
+10. **Harmonizer**
+    - 1. Move to harmonizer
     ```bash
     python prepforharmonizer.py x --mode 0
     ```
-    - run the harmonizer
+    - 2. run the harmonizer
     ```bash
     cd Harmonizer
     python -m demo.image_harmonization.run --example-path ..<Path to folder containing mask and composite sub directory>
     cd ..                           
     ```
-    - run encoding
+    - 3. run encoding
     ```bash
     python encodingHarmonized.py <harmonized folder in path to folder containing mask and composite sub directory>
     ```
+
     Example:
     ```bash
-    python prepforharmonizer.py x --mode 0
+    python prepforharmonizer.py result --mode 0
     ```
     ```bash
     cd Harmonizer
@@ -367,4 +369,26 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
     ```bash
     python encodingHarmonized.py harmonize/bmx-trees/harmonized
+    ```
+11. **workflows**
+
+    - 1. Using mask2former
+    ```bash
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0
+    ```
+    - 2. Predefined Segments
+    ```bash
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model
+    ```
+    - 3. SAM2 + Harmonizer
+    ```bash
+    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
+    ./add_harmonization.sh
+    ```
+    (On actual dataset)
+    ```bash
+    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS\JPEGImages\480p   
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
+    ./add_harmonization.sh
     ```

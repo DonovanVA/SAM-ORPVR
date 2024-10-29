@@ -41,3 +41,5 @@ done
 echo "Running SAM2 on the cropped images"
 python sam2/SAM2segmenter.py cropped
 echo "Cropping completed for all directories."
+echo "Completed..."
+sleep 3
