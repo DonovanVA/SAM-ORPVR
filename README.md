@@ -285,7 +285,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 8. **Master command (bulk.sh)**
     This master command is to elegantly wrap around all of the previous commands in one .sh file,
     ```bash
-    ./bulk.sh <folder> <model> <mode> [--no-mask-model] [--inpaint-only]
+    ./bulk.sh <folder> <model> <mode> [--no-mask-model] [--inpaint-only] --width 640 --height 480
     ```
     * `<folder>` - contains folders that would containin sample images each `DAVIS-test/JPEGImages/480p/**/**(.jpg)`
     eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
@@ -296,15 +296,15 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     Example:
     - Run without `mask2former` model:
     ```bash 
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480 --no-mask-model
     ```
     - Run with `mask2former` model:
     ```bash
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```
     - Run with inpaint only:
     ```bash
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480 --inpaint-only
     ```
     (OPTIONAL STEP) Convert MP4 to mov
     ```bash
@@ -329,7 +329,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     To test the flow using SAM2 and inpainting, follow the steps below:
     1. Crop the images then run sam2 on it
     ```bash
-    ./cropAndSAM.sh <video_parent_dir>
+    ./cropAndSAM.sh <video_parent_dir> --width 640 --height 480
     ```
     2. Run bulk.sh with only inpainting
     ```bash
@@ -338,7 +338,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     Example:
     ```bash
-    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
+    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p --width 640 --height 480
     ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
     ```
 
@@ -360,7 +360,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     Example:
     ```bash
-    python prepforharmonizer.py result --mode 0
+    python prepforharmonizer.py result --mode 0 --width 854 --height 480
     ```
     ```bash
     cd Harmonizer
@@ -377,18 +377,18 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 11. **workflows**
 
     - 1. Using mask2former
-    ```bash
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0
+    ```bash 
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```
     - 2. Predefined Segments
     ```bash
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```
     - 3. SAM2 + Harmonizer
     ```bash
-    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
-    ./add_harmonization.sh
+    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p --width 640 --height 480
+    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./add_harmonization.sh --width 854 --height 480
     ```
     (On actual dataset)
     ```bash
@@ -406,3 +406,9 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     - videoHarmonized
     - videoHarmonizedMOV
     - videoMOV
+12. **Master command**
+    ```bash
+    ./master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --harmonize --sam2-segment --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ```
