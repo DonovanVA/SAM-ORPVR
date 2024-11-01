@@ -304,17 +304,17 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
 
 10. **Harmonizer**
-    - 1. Move to harmonizer
+    1. Move to harmonizer
     ```bash
     python prepforharmonizer.py x --mode 0
     ```
-    - 2. run the harmonizer
+    2. run the harmonizer
     ```bash
     cd Harmonizer
     python -m demo.image_harmonization.run --example-path ..<Path to folder containing mask and composite sub directory>
     cd ..                           
     ```
-    - 3. run encoding
+    3. run encoding
     ```bash
     python encodingharmonized.py <harmonized folder in path to folder containing mask and composite sub directory>
     ```
