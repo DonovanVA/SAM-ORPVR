@@ -23,6 +23,7 @@ https://github.com/user-attachments/assets/ba2d2ad6-ed55-43d9-bd63-faac7083846a
 
 
 ### Setting Up Guide
+Navigate to the `src` directory
 I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable. Also, if you are using GPU. Remember to do step 1 first then step 2.
 1. **Install the correct CUDA version (I am using 11.7)**
     ### CUDAv11.7
@@ -194,6 +195,7 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
 command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc.exe' failed with exit code 2
     ```
+
 5. **Inpainting Model**
     For inpainting, we will standardise to `E2FGVI` as it is stated to be more accurate by the research paper
     In main directory, Install `E2FGVI` and `AOT-GAN-for-Inpainting`:
@@ -209,6 +211,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     - Install the other inpainting model (video), it is optional:
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
+
 6. **masking.py fix (if you get AssertionError)**
     change this in line 11
     ```python
@@ -281,32 +284,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     python encoding.py result/bmx-bumps/e2fgvi_hq/original
     ```
     *original can be:('original', 'offset', 'dynamic'), saves to /video/bmx-bumps dir
-
-8. **Master command (bulk.sh)**
-    This master command is to elegantly wrap around all of the previous commands in one .sh file,
-    ```bash
-    ./bulk.sh <folder> <model> <mode> [--no-mask-model] [--inpaint-only] --width 640 --height 480
-    ```
-    * `<folder>` - contains folders that would containin sample images each `DAVIS-test/JPEGImages/480p/**/**(.jpg)`
-    eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
-    * `<model>` - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
-    * `<mode>` - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
-    * `--no-mask-model` is a flag to set whenever you want to use a segmentation model (in this case its mask2former)
-    * `--inpaint-only` to use inpainting network only
-    Example:
-    - Run without `mask2former` model:
-    ```bash 
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480 --no-mask-model
-    ```
-    - Run with `mask2former` model:
-    ```bash
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
-    ```
-    - Run with inpaint only:
-    ```bash
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480 --inpaint-only
-    ```
-    (OPTIONAL STEP) Convert MP4 to mov
+    ##### 6. (OPTIONAL STEP) Convert MP4 to mov
     ```bash
     python mp4tomov.py video videoMOV
     ```
@@ -322,24 +300,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     Example:
     ```bash
     cp -f "movetosam2-override/SAM2segmenter.py" "sam2/SAM2segmenter.py"
-    python sam2/SAM2segmenter.py C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p
-    ```
-
-    (Using bash) Run SAM2 + Crop, then inpaint only**
-    To test the flow using SAM2 and inpainting, follow the steps below:
-    1. Crop the images then run sam2 on it
-    ```bash
-    ./cropAndSAM.sh <video_parent_dir> --width 640 --height 480
-    ```
-    2. Run bulk.sh with only inpainting
-    ```bash
-    ./bulk.sh <video_parent_dir> e2fgvi_hq 0 --inpaint-only
-    ```
-
-    Example:
-    ```bash
-    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p --width 640 --height 480
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
+    python sam2/SAM2segmenter.py C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p
     ```
 
 10. **Harmonizer**
@@ -374,41 +335,90 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```bash
     python mp4tomov.py videoHarmonized videoHarmonizedMOV
     ```
-11. **workflows**
 
-    - 1. Using mask2former
+11. **Master command**
+    - Usage:
+    ```bash
+    ./scripts/master.sh <image_parent_directory> <model> <mode> [--no-mask-model] [--harmonize] [--sam2-segment] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
+    ```
+    <image_parent_directory> -> directory containing folders that would containin sample images each .......DAVIS-test/JPEGImages/480p/**/**(.jpg) eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
+    <model> -> either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
+    <mode> -> either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
+    <ct_width> -> crop to target width
+    <ct_height> -> crop to target height
+    <t_width> -> retargetting width
+    <t_height> -> retargetting height
+    [--no-mask-model] -> use predefined segments in the DAVIS-test\Annotations\480p dir
+    [--harmonize] -> harmonize videos and save them in `videoHarmonized` dir
+    [--sam2-segment] -> launches the SAM2 app and allow user to define their own segments
+    [--crop_to_width] -> specify a required <ct_width> if not, defaults to `640`
+    [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
+    [--target_width] -> specify a required <t_width> if not, defaults to `854`
+    [--target_height] -> specify a requirec <t_height> if not, defaults to `480`
+
+    On completion: video in `video` dir
+    
+    - These are the set of commands to run to generate masks based on the experiments:
+        1. mask2former model
+        2. predefined segments
+        3. SAM2 segmentaion + harmonizer
+
+    Example (in order of 1. 2. 3.):     
+    ```bash
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --harmonize --sam2-segment --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ```
+
+12. **Individual workflows**
+    - Individual workflows for testing:
+    1. Crops and launches app for user to apply SAM2 segmentation
     ```bash 
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/cropAndSAM.sh <image_parent_directory> --width <ct_width> --height <ct_height>
     ```
-    - 2. Predefined Segments
-    ```bash
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    On completion: cropped SAM2 segments in `dataset` dir
+
+    2. Applies mask2former segmentation model for humans unless the following flags are specified
+    ```bash 
+    ./scripts/bulk.sh <image_parent_directory> <model> <mode> [--inpaint-only] [--no-mask-model] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
     ```
-    - 3. SAM2 + Harmonizer
-    ```bash
-    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p --width 640 --height 480
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
-    ./add_harmonization.sh --width 854 --height 480
+    On completion: inpainted frames in `result_inpaint` dir, relocated frames in `result` dir, video in `video` dir
+
+    3. Create a harmonized video, requires `result` dir containing the relocated frames
+    ```bash  
+    ./scripts/add_harmonization.sh --width <t_width> --height <t_height>
     ```
-    (On actual dataset)
+    On completion: harmonized videos in `videoHarmonized` dir
+
+    <image_parent_directory> -> directory containing folders that would containin sample images each .......DAVIS-test/JPEGImages/480p/**/**(.jpg) eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
+    <model> -> either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
+    <mode> -> either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
+    <ct_width> -> crop to target width
+    <ct_height> -> crop to target height
+    <t_width> -> retargetting width
+    <t_height> -> retargetting height
+    [--inpaint-only] -> applies inpainting network ONLY (if you already have the segments in the `dataset` dir)
+    [--no-mask-model] -> Uses predefined segments
+    [--crop_to_width] -> specify a required <ct_width> if not, defaults to `640`
+    [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
+    [--target_width] -> specify a required <t_width> if not, defaults to `854`
+    [--target_height] -> specify a requirec <t_height> if not, defaults to `480`
+
+    Example:
+
+    1. SAM2 + Harmonizer:
     ```bash
-    ./cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS\JPEGImages\480p   
-    ./bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS\JPEGImages\480p e2fgvi_hq 0 --inpaint-only
-    ./add_harmonization.sh
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 640 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480
     ```
-    when resetting please select only these files:
-    - harmonize
-    - cropped
-    - dataset
-    - result
-    - result_inpaint
-    - video
-    - videoHarmonized
-    - videoHarmonizedMOV
-    - videoMOV
-12. **Master command**
+
+    2. Predefined segments:
     ```bash
-    ./master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
-    ./master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
-    ./master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --harmonize --sam2-segment --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ```
+
+    3. Mask2former segments:
+    ```bash
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```
