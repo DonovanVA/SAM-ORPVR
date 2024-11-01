@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd ../src
 # Ensure the script is executed from the correct parent directory
 if [ ! -d "Harmonizer" ]; then
     echo "Harmonizer directory not found. Please run this script from the correct parent directory."

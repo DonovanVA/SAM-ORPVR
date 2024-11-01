@@ -1,8 +1,8 @@
 #!/bin/bash
-
+cd ../src
 # Ensure at least one argument
 if [ "$#" -lt 1 ]; then
-  echo "Usage: $0 <parent_directory> [--width <width>] [--height <height>]"
+  echo "Usage: $0 <image_parent_directory> [--width <width>] [--height <height>]"
   exit 1
 fi
 

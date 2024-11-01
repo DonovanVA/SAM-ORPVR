@@ -1,8 +1,8 @@
 #!/bin/bash
-
+cd ../src
 # Ensure correct number of arguments
 if [ "$#" -lt 3 ]; then
-  echo "Usage: $0 <parent_directory> <model_type> <mode> [--no-mask-model] [--sam2-segment] [--harmonize] [--crop_to_width <crop_to_width>] [--crop_to_height <crop_to_height>] [--target_width <target_width>] [--target_height <target_height>]"
+  echo "Usage: $0 <image_parent_directory> <model_type> <mode> [--no-mask-model] [--sam2-segment] [--harmonize] [--crop_to_width <crop_to_width>] [--crop_to_height <crop_to_height>] [--target_width <target_width>] [--target_height <target_height>]"
   echo "Model types: aotgan, e2fgvi, e2fgvi_hq"
   echo "Modes: 0 (original), 1 (offset), 2 (dynamic)"
   exit 1
