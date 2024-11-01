@@ -23,6 +23,7 @@ https://github.com/user-attachments/assets/ba2d2ad6-ed55-43d9-bd63-faac7083846a
 
 
 ### Setting Up Guide
+Navigate to the `src` directory
 I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable. Also, if you are using GPU. Remember to do step 1 first then step 2.
 1. **Install the correct CUDA version (I am using 11.7)**
     ### CUDAv11.7
@@ -30,8 +31,21 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     - check your CUDA_PATH using something like echo %CUDA_PATH% or if you are using windows like me, check using edit the system environment variables -> Advanced -> Environment Variables and then you should see:
 
     ![Screenshot 2024-09-21 231625](https://github.com/user-attachments/assets/26b4d499-afd6-4c33-b2c2-fd7a6d5160fd)
-
     under system variables, if not add a new CUDA_PATH and CUDA_PATH_V11_7 
+    - Create a new conda environment (python 3.9.x)
+    ```bash
+    conda create -n SAM-ORPVR python=3.9
+    ```
+    
+    - (For windows): If you are unable to switch the CUDA environment freely or see the conda version `(SAM-ORPVR) PS C:\Users\User...>`, run the following command below as `administrator`
+    ```bash
+    Set-ExecutionPolicy RemoteSigned
+    ```
+    
+    - Activate the new environment
+    ```bash
+    conda activate SAM-ORPVR
+    ```
 
     - Install correct python torch CUDA-enabled libraries for CUDA, run the commands here: (https://pytorch.org/get-started/previous-versions/)
     ```bash
@@ -93,17 +107,16 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
      pip install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0
     ```
 
-2. **Install Dependencies and DAVIS 2016 dataset:**
-
+2. **Install Dependencies and DAVIS 2016 dataset (Order is important, FOLLOW carefully):**
+    - Install openmim
     ```bash
     pip install -U openmim
     mim install mmcv-full
     ```
 
-   - Davis Dataset: https://davischallenge.org/davis2016/code.html
+    - Davis Dataset: https://davischallenge.org/davis2016/code.html
 
-3. **Download the correct version of mmdetection**
-    download mmdetection v2.0
+    - Download mmdetection v2.0
     https://github.com/open-mmlab/mmdetection/tree/2.x
 
     ```bash
@@ -142,25 +155,48 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     ```
     again
 
-    Also install other dependencies `numpy==1.24.3` in requirement.txt file by typing:
+    then install the necessary libraries:
     ```bash
     pip install -r requirements.txt
     ```
 
 
+3. **mask2former Model**
+    - Download mask2former model and put inside `mmdetection/checkpoints` (branch 2.0): https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
 
-4. **masking.py fix (if you get AssertionError)**
-    change this in line 11
-    ```python
-    from mmdetection.mmdet.apis import inference_detector,init_detector
-    with mmdet.apis import inference_detector,init_detector
+4. **SAM Model**:
+    ```bash
+    mkdir SAM
+    cd SAM
+    mkdir checkpoints
     ```
-5. **Download mask2former model**
-    download the model and put inside mmdetection/checkpoints (branch 2.0):
-    https://github.com/open-mmlab/mmdetection/blob/2.x/configs/mask2former/README.md
+    - Install segment anything
 
+    ```bash
+    pip install git+https://github.com/facebookresearch/segment-anything.git
+    ```
 
-6. **inpainting.py fix:**
+    - Download SAM model and put inside `SAM/checkpoints` : https://github.com/facebookresearch/segment-anything?tab=readme-ov-file#model-checkpoints
+    *I am using `vit_h`, options are `vit_h`,`vit_l`,`vit_b`
+    Note: Requires device spec
+
+    SAM2:
+    * Install SAM2
+    ```bash
+    git clone https://github.com/facebookresearch/sam2.git
+    cd sam2
+    ```
+
+    * Also, we use python `3.9.x` here because it works with E2FGVI and mask2former (the previous set up), the 3.10.x suggested by Meta is only for accelerated computing
+    https://github.com/facebookresearch/sam2/blob/main/INSTALL.md
+
+    * The error below occurs if you dont have desktop environment for C++ installed (recommend to install it through microsoft visual studio)
+    ```bash
+    C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
+command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc.exe' failed with exit code 2
+    ```
+
+5. **Inpainting Model**
     For inpainting, we will standardise to `E2FGVI` as it is stated to be more accurate by the research paper
     In main directory, Install `E2FGVI` and `AOT-GAN-for-Inpainting`:
     ```bash
@@ -175,6 +211,13 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
 
     - Install the other inpainting model (video), it is optional:
     git clone https://github.com/hyunobae/AOT-GAN-for-Inpainting.git
+
+6. **masking.py fix (if you get AssertionError)**
+    change this in line 11
+    ```python
+    from mmdetection.mmdet.apis import inference_detector,init_detector
+    with mmdet.apis import inference_detector,init_detector
+    ```
 
 7. **Test commands (In order)**
     `DAVIS-test` - contains folders with folders containing sample images from the 480p DAVIS 2016 dataset each:
@@ -241,24 +284,141 @@ I use windows using python 3.9.x, but you can also set up a docker container if 
     python encoding.py result/bmx-bumps/e2fgvi_hq/original
     ```
     *original can be:('original', 'offset', 'dynamic'), saves to /video/bmx-bumps dir
-
-8. **Master command (bulk.sh)**
-    This master command is to elegantly wrap around all of the previous commands in one .sh file,
+    ##### 6. (OPTIONAL STEP) Convert MP4 to mov
     ```bash
-    ./bulk.sh <folder> <model> <mode> [--no-mask-model]
+    python mp4tomov.py video videoMOV
     ```
-    * `<folder>` - contains folders that would containin sample images each `DAVIS-test/JPEGImages/480p/**/**(.jpg)`
-    eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
-    * `<model>` - either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
-    * `<mode>` - either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
-    * `--no-mask-model` is a flag to set whenever you want to use a segmentation model (in this case its mask2former)
+
+9. **App to Generate masks from SAM2**
+    This app generates masks from SAM2, requires manual input
+    ```bash
+    cp -f "movetosam2-override/SAM2segmenter.py" "sam2/SAM2segmenter.py"
+    python sam2/SAM2segmenter.py <video_parent_dir>
+    ```
+    * where `<video_parent_dir>` contains folders of images each
 
     Example:
-    - Run without mask2former model:
-    ```bash 
-    `./bulk.sh C:\Users\donov\Desktop\FYP\ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model`
-    ```
-    - Run with mask2former model:
     ```bash
-    `./bulk.sh C:\Users\donov\Desktop\FYP\ORPVR\DAVIS-test\JPEGImages\480p e2fgvi_hq 0`
+    cp -f "movetosam2-override/SAM2segmenter.py" "sam2/SAM2segmenter.py"
+    python sam2/SAM2segmenter.py C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p
+    ```
+
+10. **Harmonizer**
+    - 1. Move to harmonizer
+    ```bash
+    python prepforharmonizer.py x --mode 0
+    ```
+    - 2. run the harmonizer
+    ```bash
+    cd Harmonizer
+    python -m demo.image_harmonization.run --example-path ..<Path to folder containing mask and composite sub directory>
+    cd ..                           
+    ```
+    - 3. run encoding
+    ```bash
+    python encodingHarmonized.py <harmonized folder in path to folder containing mask and composite sub directory>
+    ```
+
+    Example:
+    ```bash
+    python prepforharmonizer.py result --mode 0 --width 854 --height 480
+    ```
+    ```bash
+    cd Harmonizer
+    python -m demo.image_harmonization.run --example-path ../harmonize/bmx-trees/
+    cd ..                           
+    ```
+    ```bash
+    python encodingHarmonized.py harmonize/bmx-trees/harmonized
+    ```
+    (OPTIONAL STEP) Convert MP4 to mov
+    ```bash
+    python mp4tomov.py videoHarmonized videoHarmonizedMOV
+    ```
+
+11. **Master command**
+    - Usage:
+    ```bash
+    ./scripts/master.sh <image_parent_directory> <model> <mode> [--no-mask-model] [--harmonize] [--sam2-segment] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
+    ```
+    <image_parent_directory> -> directory containing folders that would containin sample images each .......DAVIS-test/JPEGImages/480p/**/**(.jpg) eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
+    <model> -> either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
+    <mode> -> either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
+    <ct_width> -> crop to target width
+    <ct_height> -> crop to target height
+    <t_width> -> retargetting width
+    <t_height> -> retargetting height
+    [--no-mask-model] -> use predefined segments in the DAVIS-test\Annotations\480p dir
+    [--harmonize] -> harmonize videos and save them in `videoHarmonized` dir
+    [--sam2-segment] -> launches the SAM2 app and allow user to define their own segments
+    [--crop_to_width] -> specify a required <ct_width> if not, defaults to `640`
+    [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
+    [--target_width] -> specify a required <t_width> if not, defaults to `854`
+    [--target_height] -> specify a requirec <t_height> if not, defaults to `480`
+
+    On completion: video in `video` dir
+    
+    - These are the set of commands to run to generate masks based on the experiments:
+        1. mask2former model
+        2. predefined segments
+        3. SAM2 segmentaion + harmonizer
+
+    Example (in order of 1. 2. 3.):     
+    ```bash
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --harmonize --sam2-segment --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ```
+
+12. **Individual workflows**
+    - Individual workflows for testing:
+    1. Crops and launches app for user to apply SAM2 segmentation
+    ```bash 
+    ./scripts/cropAndSAM.sh <image_parent_directory> --width <ct_width> --height <ct_height>
+    ```
+    On completion: cropped SAM2 segments in `dataset` dir
+
+    2. Applies mask2former segmentation model for humans unless the following flags are specified
+    ```bash 
+    ./scripts/bulk.sh <image_parent_directory> <model> <mode> [--inpaint-only] [--no-mask-model] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
+    ```
+    On completion: inpainted frames in `result_inpaint` dir, relocated frames in `result` dir, video in `video` dir
+
+    3. Create a harmonized video, requires `result` dir containing the relocated frames
+    ```bash  
+    ./scripts/add_harmonization.sh --width <t_width> --height <t_height>
+    ```
+    On completion: harmonized videos in `videoHarmonized` dir
+
+    <image_parent_directory> -> directory containing folders that would containin sample images each .......DAVIS-test/JPEGImages/480p/**/**(.jpg) eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
+    <model> -> either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
+    <mode> -> either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
+    <ct_width> -> crop to target width
+    <ct_height> -> crop to target height
+    <t_width> -> retargetting width
+    <t_height> -> retargetting height
+    [--inpaint-only] -> applies inpainting network ONLY (if you already have the segments in the `dataset` dir)
+    [--no-mask-model] -> Uses predefined segments
+    [--crop_to_width] -> specify a required <ct_width> if not, defaults to `640`
+    [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
+    [--target_width] -> specify a required <t_width> if not, defaults to `854`
+    [--target_height] -> specify a requirec <t_height> if not, defaults to `480`
+
+    Example:
+
+    1. SAM2 + Harmonizer:
+    ```bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 640 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480
+    ```
+
+    2. Predefined segments:
+    ```bash
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ```
+
+    3. Mask2former segments:
+    ```bash
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```

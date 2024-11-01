@@ -37,7 +37,7 @@ def main(args):
 
     bimg = cv2.imread(flist[0],cv2.IMREAD_COLOR)
     args.h,args.w,_ = bimg.shape
-    args.new_w = int(np.ceil(args.h * 16 / 9)) # 640 -> 854
+    #args.height = int(np.ceil(args.h * 16 / 9)) # 640 -> 854
     
     relocator = Relocator(args)
     
@@ -46,7 +46,7 @@ def main(args):
         # Inpainted Background
         fname = os.path.basename(flist[i])
         bimg = cv2.imread(flist[i],cv2.IMREAD_COLOR)
-        bimg = cv2.resize(bimg,dsize=(args.new_w,args.h),interpolation=cv2.INTER_CUBIC)
+        bimg = cv2.resize(bimg,dsize=(args.width,args.height),interpolation=cv2.INTER_CUBIC)
         # Original Image
         img = cv2.imread(ilist[i],cv2.IMREAD_COLOR)
         with open(olist[i],"r") as f:

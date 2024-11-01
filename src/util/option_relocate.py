@@ -7,13 +7,15 @@ parser = argparse.ArgumentParser(description='Object Relocation')
 parser.add_argument('src', type=str, help='single image or directory')
 parser.add_argument('--dstdir', default='result', help='result save dir')
 parser.add_argument('--mode', default=2, choices=[0,1,2], type=int, help='relocation mode')
+parser.add_argument('--width', default=854, type=int, help='relocation width')
+parser.add_argument('--height', default=480, type=int, help='relocation height')
 # ----------------------------------
 args = parser.parse_args()
 
 class Relocator:
     def __init__(self,args):
         self.w = args.w
-        self.nw = args.new_w
+        self.nw = args.width
         self.offset = self.nw - self.w
         self.offset_half = self.offset // 2
         self.margin = 5
