@@ -337,10 +337,12 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
 
 11. **Master command**
-    - Usage:
+    Usage:
     ```bash
     ./scripts/master.sh <image_parent_directory> <model> <mode> [--no-mask-model] [--harmonize] [--sam2-segment] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
     ```
+    
+    ```bash
     <image_parent_directory> -> directory containing folders that would containin sample images each .......DAVIS-test/JPEGImages/480p/**/**(.jpg) eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
     <model> -> either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
     <mode> -> either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
@@ -355,15 +357,16 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
     [--target_width] -> specify a required <t_width> if not, defaults to `854`
     [--target_height] -> specify a requirec <t_height> if not, defaults to `480`
-
+    ```
     On completion: video in `video` dir
     
-    - These are the set of commands to run to generate masks based on the experiments:
+    These are the set of commands to run to generate masks based on the experiments:
         1. mask2former model
         2. predefined segments
         3. SAM2 segmentaion + harmonizer
 
     Example (in order of 1. 2. 3.):     
+
     ```bash
     ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
@@ -371,7 +374,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
 
 12. **Individual workflows**
-    - Individual workflows for testing:
+    Individual workflows for testing:
     1. Crops and launches app for user to apply SAM2 segmentation
     ```bash 
     ./scripts/cropAndSAM.sh <image_parent_directory> --width <ct_width> --height <ct_height>
@@ -390,6 +393,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
     On completion: harmonized videos in `videoHarmonized` dir
 
+    ```bash
     <image_parent_directory> -> directory containing folders that would containin sample images each .......DAVIS-test/JPEGImages/480p/**/**(.jpg) eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
     <model> -> either 'aotgan', 'e2fgvi', 'e2fgvi_hq'
     <mode> -> either 0 for 'original', 1 for 'offset', 2 for 'dynamic'
@@ -403,6 +407,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
     [--target_width] -> specify a required <t_width> if not, defaults to `854`
     [--target_height] -> specify a requirec <t_height> if not, defaults to `480`
+    ```
 
     Example:
 
