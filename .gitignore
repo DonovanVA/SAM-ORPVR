@@ -17,7 +17,7 @@
 !src/movetosam2-override
 !src/movetosam2-override/**
 !src/mp4tomov.py
-!src/encodingHarmonized.py
+!src/encodingharmonized.py
 !src/prepforharmonizer.py
 !src/scripts
 !src/scripts**

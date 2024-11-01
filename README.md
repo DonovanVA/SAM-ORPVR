@@ -316,7 +316,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
     - 3. run encoding
     ```bash
-    python encodingHarmonized.py <harmonized folder in path to folder containing mask and composite sub directory>
+    python encodingharmonized.py <harmonized folder in path to folder containing mask and composite sub directory>
     ```
 
     Example:
@@ -329,7 +329,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     cd ..                           
     ```
     ```bash
-    python encodingHarmonized.py harmonize/bmx-trees/harmonized
+    python encodingharmonized.py harmonize/bmx-trees/harmonized
     ```
     (OPTIONAL STEP) Convert MP4 to mov
     ```bash
