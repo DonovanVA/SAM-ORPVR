@@ -2,7 +2,7 @@
 
 # Ensure correct number of arguments
 if [ "$#" -lt 3 ]; then
-  echo "Usage: $0 <parent_directory> <model_type> <mode> [--no-mask-model] [--inpaint-only]"
+  echo "Usage: $0 <parent_directory> <model_type> <mode> [--no-mask-model] [--inpaint-only] [--crop_to_width <crop_to_width>] [--crop_to_height <crop_to_height>] [--target_width <target_width>] [--target_height <target_height>]"
   echo "Model types: aotgan, e2fgvi, e2fgvi_hq"
   echo "Modes: 0 (original), 1 (offset), 2 (dynamic)"
   exit 1
@@ -13,12 +13,15 @@ PARENT_DIR="$1"  # This can now be a relative path
 MODEL_TYPE="$2"
 MODE="$3"
 
-# Optional flags
+# Optional flags and parameters
 NO_MASK_MODEL=0
 INPAINT_ONLY=0
 HAS_MASK_MODEL="has-0model"
-
-# Parse additional flags
+CROP_TO_WIDTH=640  # Default width
+CROP_TO_HEIGHT=480  # Default height
+TARGET_WIDTH=854 # Default target width
+TARGET_HEIGHT=480 # Default target height
+# Parse additional flags and parameters
 shift 3
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -28,6 +31,22 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --inpaint-only)
       INPAINT_ONLY=1
+      ;;
+    --crop_to_width)
+      shift
+      CROP_TO_WIDTH="$1"
+      ;;
+    --crop_to_height)
+      shift
+      CROP_TO_HEIGHT="$1"
+      ;;
+    --target_width)
+      shift
+      TARGET_WIDTH="$1"
+      ;;
+    --target_height)
+      shift
+      TARGET_HEIGHT="$1"
       ;;
     *)
       echo "Unknown flag: $1"
@@ -78,13 +97,13 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
     # Step 1 and Step 2: Crop and mask images (skip if --inpaint-only is set)
     if [ "$INPAINT_ONLY" -eq 0 ]; then
         # Step 1: Crop images
-        echo "Running crop.py on $SAMPLE_NAME..."
-        python crop.py "$SAMPLE_NAME" --width 640 --height 480 --mode 0
+        echo "Running crop.py on $SAMPLE_NAME with width $CROP_TO_WIDTH and height $CROP_TO_HEIGHT..."
+        python crop.py "$SAMPLE_NAME" --width "$CROP_TO_WIDTH" --height "$CROP_TO_HEIGHT" --mode 0
 
         # Step 2: Run masking and any preprocessing step depending on --no-mask-model flag
         if [ "$NO_MASK_MODEL" -eq 1 ]; then
             echo "No mask model is selected, cropping mask..."
-            python crop.py "$ANNOTATION_NAME" --width 640 --height 480 --mode 1
+            python crop.py "$ANNOTATION_NAME" --width "$CROP_TO_WIDTH" --height "$CROP_TO_HEIGHT" --mode 1
             echo "Running masking.py without model on cropped/${SAMPLE_NAME##*/}/masks..."
             python masking.py "dataset/${SAMPLE_NAME##*/}/masks" --mode 1 
         else
@@ -98,8 +117,8 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
     python inpainting.py "dataset/${SAMPLE_NAME##*/}" --model "$MODEL_TYPE"
     
     # Step 4: Relocate images using the specified mode
-    echo "Running relocating.py on result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE with mode $MODE..."
-    python relocating.py "result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE" --mode "$MODE"
+    echo "Running relocating.py on result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE with mode $MODE... to width $TARGET_WIDTH and height $TARGET_HEIGHT"
+    python relocating.py "result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE" --mode "$MODE" --width "$TARGET_WIDTH" --height "$TARGET_HEIGHT"
 
     # Step 5: Encode images with the corresponding result type based on the mode
     echo "Running encoding.py on result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE..."

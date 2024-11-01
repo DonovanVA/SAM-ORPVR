@@ -22,7 +22,6 @@ def relocate_objects_and_save_mask(imgdir, objdir, resultdir, mode=args.mode):
     ilist = sorted(glob(os.path.join(imgdir, '*.png')) + glob(os.path.join(imgdir, '*.jpg')))
     olist = sorted(glob(os.path.join(objdir, '*.json')))
 
-
     if ilist:
         sample_img = cv2.imread(ilist[0], cv2.IMREAD_COLOR)
         h, w, _ = sample_img.shape
@@ -33,7 +32,7 @@ def relocate_objects_and_save_mask(imgdir, objdir, resultdir, mode=args.mode):
 
     
     args.h, args.w, _ = bimg.shape
-    args.new_w = int(np.ceil(args.h * 16 / 9))
+    #args.new_w = int(np.ceil(args.h * 16 / 9))
 
     relocator = Relocator(args)
     
@@ -46,8 +45,8 @@ def relocate_objects_and_save_mask(imgdir, objdir, resultdir, mode=args.mode):
         jpg_fname = f"{name}.jpg"  # Set the output filename to .jpg
         
         # Create a black background for each image
-        bimg = np.zeros((args.h, args.new_w, 3), dtype=np.uint8)
-        bimg = cv2.resize(bimg, dsize=(args.new_w, args.h), interpolation=cv2.INTER_CUBIC)
+        bimg = np.zeros((args.height, args.width, 3), dtype=np.uint8)
+        bimg = cv2.resize(bimg, dsize=(args.width, args.height), interpolation=cv2.INTER_CUBIC)
 
         img = cv2.imread(ilist[i], cv2.IMREAD_COLOR)
         with open(olist[i], "r") as f:
