@@ -389,9 +389,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --harmonize --sam2-segment --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```
 
-12. **Individual workflows**
-
-    ### Individual workflows for testing
+12. **Individual workflows for testing**
 
     ##### Step 1: Crops and launches app for user to apply SAM2 segmentation
     ```bash 
