@@ -328,7 +328,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     ##### Step 3: Run encoding
     ```bash
-    python encodingharmonized.py <harmonized folder in path to folder containing mask and composite sub directory>
+    python encoding.py <path to harmonized folder> --harmonize
     ```
 
     ##### Example:

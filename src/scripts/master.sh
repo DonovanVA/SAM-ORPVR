@@ -191,8 +191,8 @@ if [ "$HARMONIZE" -eq 1 ]; then
         cd .. || exit
 
         # Run encoding on harmonized images
-        echo "Running encodingharmonized.py on ${HARMONIZE_DIR}harmonized..."
-        python encodingharmonized.py "${HARMONIZE_DIR}harmonized"
+        echo "Running encoding.py on ${HARMONIZE_DIR}harmonized..."
+        python encoding.py "${HARMONIZE_DIR}harmonized" --harmonize
 
         # Optional delay between iterations
         echo "Completed harmonisation for ${HARMONIZE_DIR}harmonized...proceeding to the next image set"
