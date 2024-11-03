@@ -16,7 +16,7 @@ MODE="$3"
 # Optional flags and parameters
 NO_MASK_MODEL=0
 INPAINT_ONLY=0
-HAS_MASK_MODEL="has-0model"
+HAS_MASK_MODEL="m2f"
 CROP_TO_WIDTH=640  # Default width
 CROP_TO_HEIGHT=480  # Default height
 TARGET_WIDTH=854 # Default target width

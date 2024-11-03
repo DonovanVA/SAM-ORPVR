@@ -16,7 +16,7 @@ MODE="$3"
 # Optional flags and parameters
 NO_MASK_MODEL=0 #default is no mask model
 SAM2_SEGMENT=0 # default is no sam2
-HAS_MASK_MODEL="has-0model"
+HAS_MASK_MODEL="m2f"
 HARMONIZE=0 # default is no harmonization
 CROP_TO_WIDTH=640  # Default width
 CROP_TO_HEIGHT=480  # Default height
@@ -198,5 +198,15 @@ if [ "$HARMONIZE" -eq 1 ]; then
         echo "Completed harmonisation for ${HARMONIZE_DIR}harmonized...proceeding to the next image set"
     done
 fi
+
+NAME_PREFIX="sam2"
+if [ "$SAM2_SEGMENT" -eq 0 ]; then
+    NAME_PREFIX="$HAS_MASK_MODEL"
+fi
+NAME="${NAME_PREFIX}_${HARMONIZE}_${CROP_TO_WIDTH}x${CROP_TO_HEIGHT}to${TARGET_WIDTH}x${TARGET_HEIGHT}"
+
+##  Step 6: Postprocessing
+python postprocessing.py --name "$NAME"
+
 echo "Pipeline execution completed for all directories."
 sleep 3

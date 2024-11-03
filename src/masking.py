@@ -8,8 +8,6 @@ import numpy as np
 import argparse  # Import argparse for command line arguments
 import torch
 
-from mmdetection.mmdet.apis import inference_detector,init_detector
-
 from util.option_masking import args,compute_intersect_area
 
 target = 0
@@ -124,6 +122,7 @@ if os.path.isdir(args.src):
     if(args.mode==1):
         segmentation_with_predefined_mask(args)
     else:
+        from mmdetection.mmdet.apis import inference_detector,init_detector #conditional import
         if args.device == None:
             args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
