@@ -242,6 +242,7 @@ if __name__ == "__main__":
     points, labels = [], []
 
     for video_dir in os.listdir(video_parent_dir):
+        points, labels = [], []
         full_video_dir = os.path.join(video_parent_dir, video_dir)
         if os.path.isdir(full_video_dir):
             try:
