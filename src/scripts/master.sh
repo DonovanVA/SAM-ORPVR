@@ -161,13 +161,10 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
     echo "Running relocating.py on result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE with mode $MODE... to width $TARGET_WIDTH and height $TARGET_HEIGHT"
     python relocating.py "result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE" --mode "$MODE" --width "$TARGET_WIDTH" --height "$TARGET_HEIGHT"
 
-    
-    if [ "$HARMONIZE" -eq 0 ]; then
-        # Step 5: Encode images with the corresponding result type based on the mode
-        echo "Running encoding.py on result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE..."
-        python encoding.py "result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE"
+    # Step 5: Encode images with the corresponding result type based on the mode
+    echo "Running encoding.py on result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE..."
+    python encoding.py "result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE"
         
-    fi
 done
 
 if [ "$HARMONIZE" -eq 1 ]; then
