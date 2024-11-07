@@ -408,6 +408,13 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```bash  
     ./scripts/add_harmonization.sh --width <t_width> --height <t_height> --mode <mode>
     ```
+
+    ##### Alternate: Get videos for diff modes (requires results_inpaint dir with original/offset/dynamic)
+    ```bash
+    ./scripts/bulk.sh <image_parent_directory>  <model> <mode> --relocating-only [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width>
+    ./scripts/add_harmonization.sh --width <t_width> --height <t_height> --mode <mode>
+    ```
+    
     On completion: harmonized videos in `videoHarmonized` dir
     *NOTE: If you are using harmonization again where there are other models directory already present in `results`, please delete that model dir as only 1 model dir should be present in results for harmonization eg: `results/e2fgvi_hq` OR `results/aotgan` and also delete the `harmonize` dir
 
