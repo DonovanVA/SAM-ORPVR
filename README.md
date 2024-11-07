@@ -405,7 +405,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     ##### Step 3: Create a harmonized video, requires `result` dir containing the relocated frames
     ```bash  
-    ./scripts/add_harmonization.sh --width <t_width> --height <t_height>
+    ./scripts/add_harmonization.sh --width <t_width> --height <t_height> --mode <mode>
     ```
     On completion: harmonized videos in `videoHarmonized` dir
 

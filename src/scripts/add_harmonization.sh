@@ -5,11 +5,11 @@ if [ ! -d "Harmonizer" ]; then
     echo "Harmonizer directory not found. Please run this script from the correct parent directory."
     exit 1
 fi
-echo "Usage: $0 [--width <width>] [--height <height>]"
+echo "Usage: $0 [--width <width>] [--height <height>] [--mode <mode>]"
 # Default values for width and height
 WIDTH=854
 HEIGHT=480
-
+MODE=0
 # Parse additional arguments for width and height
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -21,6 +21,10 @@ while [[ "$#" -gt 0 ]]; do
       shift
       HEIGHT="$1"
       ;;
+    --mode)
+      shift
+      MODE="$1"
+      ;;
     *)
       echo "Unknown option: $1"
       exit 1
@@ -31,7 +35,7 @@ done
 
 # Prepare for harmonizer
 echo "Running prepforharmonizer.py to prepare for harmonization with width $WIDTH and height $HEIGHT..."
-python prepforharmonizer.py result --mode 0 --height "$HEIGHT" --width "$WIDTH"
+python prepforharmonizer.py result --mode "$MODE" --height "$HEIGHT" --width "$WIDTH"
 
 # Navigate to the harmonized directories and run harmonization
 for HARMONIZE_DIR in harmonize/*/; do  # The trailing slash ensures we only get directories
