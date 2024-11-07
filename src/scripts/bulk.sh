@@ -2,7 +2,7 @@
 cd ../src
 # Ensure correct number of arguments
 if [ "$#" -lt 3 ]; then
-  echo "Usage: $0 <image_parent_directory> <model> <mode> [--inpaint-only] [--no-mask-model] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>"
+  echo "Usage: $0 <image_parent_directory> <model> <mode> [--inpaint-only] [--relocating-only] [--no-mask-model] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>"
   echo "Model types: aotgan, e2fgvi, e2fgvi_hq"
   echo "Modes: 0 (original), 1 (offset), 2 (dynamic)"
   exit 1
@@ -16,6 +16,7 @@ MODE="$3"
 # Optional flags and parameters
 NO_MASK_MODEL=0
 INPAINT_ONLY=0
+RELOCATING_ONLY=0
 HAS_MASK_MODEL="m2f"
 CROP_TO_WIDTH=640  # Default width
 CROP_TO_HEIGHT=480  # Default height
@@ -31,6 +32,9 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --inpaint-only)
       INPAINT_ONLY=1
+      ;;
+    --relocating-only)
+      RELOCATING_ONLY=1
       ;;
     --crop_to_width)
       shift
@@ -94,8 +98,8 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
     echo "Processing directory: $SAMPLE_NAME"
     echo "Annotation directory: $ANNOTATION_NAME"
 
-    # Step 1 and Step 2: Crop and mask images (skip if --inpaint-only is set)
-    if [ "$INPAINT_ONLY" -eq 0 ]; then
+    # Step 1 and Step 2: Crop and mask images (skip if --inpaint-only OR --relocating-only is set)
+    if [ "$RELOCATING_ONLY" -eq 0 ] && [ "$INPAINT_ONLY" -eq 0 ]; then
         # Step 1: Crop images
         echo "Running crop.py on $SAMPLE_NAME with width $CROP_TO_WIDTH and height $CROP_TO_HEIGHT..."
         python crop.py "$SAMPLE_NAME" --width "$CROP_TO_WIDTH" --height "$CROP_TO_HEIGHT" --mode 0
@@ -112,17 +116,21 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
         fi
     fi
 
-    # Step 3: Inpaint images using the specified model
-    echo "Running inpainting.py on dataset/${SAMPLE_NAME##*/} with model $MODEL_TYPE..."
-    python inpainting.py "dataset/${SAMPLE_NAME##*/}" --model "$MODEL_TYPE"
-    
+    if [ "$RELOCATING_ONLY" -eq 0 ]; then
+        # Step 3: Inpaint images using the specified model
+        echo "Running inpainting.py on dataset/${SAMPLE_NAME##*/} with model $MODEL_TYPE..."
+        python inpainting.py "dataset/${SAMPLE_NAME##*/}" --model "$MODEL_TYPE"
+    else
+        echo "Skipping inpainting step as --relocating-only flag is set."
+    fi
+
     # Step 4: Relocate images using the specified mode
     echo "Running relocating.py on result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE with mode $MODE... to width $TARGET_WIDTH and height $TARGET_HEIGHT"
     python relocating.py "result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE" --mode "$MODE" --width "$TARGET_WIDTH" --height "$TARGET_HEIGHT"
 
     # Step 5: Encode images with the corresponding result type based on the mode
     echo "Running encoding.py on result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE..."
-    python encoding.py "result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE"
+    python encoding.py "result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE" --mode "$MODE"
 
     echo "Completed processing for directory: $SAMPLE_NAME"
 done

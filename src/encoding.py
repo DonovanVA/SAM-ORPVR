@@ -8,6 +8,7 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('src', help='Frame Directory')
 parser.add_argument('--harmonize', action='store_true', help='Harmonize the video output')
+parser.add_argument('--mode', type=str, default=None, help='Mode for harmonized output (optional)')
 
 args = parser.parse_args()
 
@@ -16,8 +17,12 @@ if args.harmonize:
     viddir = './videoHarmonized'
     path = args.src
     _, clip, model = args.src.split('/')
-    dstdir = os.path.join(viddir, clip + "_h")
-    pathOut = os.path.join(dstdir, f'{clip}_{model}.mp4')
+    dstdir = os.path.join(viddir, clip + "_harmonized")
+    mode_list = ['original', 'offset', 'dynamic']
+    if args.mode:
+        pathOut = os.path.join(dstdir, f'{clip}_{model}_{mode_list[int(args.mode)]}.mp4')
+    else:
+        pathOut = os.path.join(dstdir, f'{clip}_{model}.mp4')
 else:
     viddir = './video'
     path = args.src

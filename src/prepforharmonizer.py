@@ -8,14 +8,12 @@ import torch
 import torchvision.transforms as transforms
 from PIL import Image
 from util.option_relocate import args, Relocator
-def relocate_objects_and_save_mask(imgdir, objdir, resultdir, mode=args.mode):
+def relocate_objects_and_save_mask(imgdir, objdir, resultdir):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    modes = ['original', 'offset', 'dynamic']
-    mode_idx = modes.index(mode) if mode in modes else 0
-
+    
+    #print(args.mode)
     # Initialize Relocator with args configuration
     args.device = device
-    args.mode = mode_idx
 
     # Get file lists
     #flist = sorted(glob(os.path.join(bimgdir, '*.png')) + glob(os.path.join(bimgdir, '*.jpg')))
@@ -76,44 +74,42 @@ def resize_image_opencv(image_tensor, new_width, new_height):
     return resized_image_tensor
 
 def copy_images_and_masks(destination_base_path, masks_base_path):
+    modes = ['original', 'offset', 'dynamic']
+    
     for foldernameA in os.listdir(args.src):
         folderA_path = os.path.join(args.src, foldernameA)
         if os.path.isdir(folderA_path):
             for foldernameB in os.listdir(folderA_path):
                 folderB_path = os.path.join(folderA_path, foldernameB)
                 if os.path.isdir(folderB_path):
-                    for foldernameC in os.listdir(folderB_path):
-                        folderC_path = os.path.join(folderB_path, foldernameC)
-                        if os.path.isdir(folderC_path):
-                            source_images_path = folderC_path
-                            destination_images_path = os.path.join(destination_base_path, foldernameA, 'composite')
-                            
-                            source_masks_path = os.path.join(masks_base_path, foldernameA, 'masks')
-                            destination_masks_path = os.path.join(destination_base_path, foldernameA, 'masks')
+                    folderC_path = os.path.join(folderB_path, modes[int(args.mode)])
+                    if os.path.isdir(folderC_path):
+                        source_images_path = folderC_path
+                        destination_images_path = os.path.join(destination_base_path, foldernameA, 'composite')
+                        source_masks_path = os.path.join(masks_base_path, foldernameA, 'masks')
+                        destination_masks_path = os.path.join(destination_base_path, foldernameA, 'masks')
 
-                            os.makedirs(destination_images_path, exist_ok=True)
-                            os.makedirs(destination_masks_path, exist_ok=True)
+                        os.makedirs(destination_images_path, exist_ok=True)
+                        os.makedirs(destination_masks_path, exist_ok=True)
+                        #
+                        for root, _, files in os.walk(source_images_path):
+                            for file in files:
+                                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
+                                    source_file = os.path.join(root, file)
+                                    destination_file = os.path.join(destination_images_path, file)
+                                    image_tensor = transforms.ToTensor()(Image.open(source_file))
+                                    #resized_image_tensor = resize_image_opencv(image_tensor, new_width, new_height)
+                                    transforms.ToPILImage()(image_tensor).save(destination_file)
 
-                            for root, _, files in os.walk(source_images_path):
-                                for file in files:
-                                    if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
-                                        source_file = os.path.join(root, file)
-                                        destination_file = os.path.join(destination_images_path, file)
-                                        image_tensor = transforms.ToTensor()(Image.open(source_file))
-                                        #resized_image_tensor = resize_image_opencv(image_tensor, new_width, new_height)
-                                        transforms.ToPILImage()(image_tensor).save(destination_file)
+                        # Apply relocation on masks
+                        relocate_objects_and_save_mask(
+                            imgdir=source_masks_path,
+                            objdir=os.path.join(masks_base_path, foldernameA, 'objects'),
+                            resultdir=destination_masks_path
+                        )
 
-                            
-                            # Apply relocation on masks
-                            relocate_objects_and_save_mask(
-                                imgdir=source_masks_path,
-                                objdir=os.path.join(masks_base_path, foldernameA, 'objects'),
-                                resultdir=destination_masks_path,
-                                mode='original'
-                            )
-
-                            print(f"Copied and resized images to: {destination_images_path}")
-                            print(f"Copied and resized masks to: {destination_masks_path}")
+                        print(f"Copied and resized images to: {destination_images_path}")
+                        print(f"Copied and resized masks to: {destination_masks_path}")
 
 #source_base_path = 'result/'
 destination_base_path = 'harmonize/'

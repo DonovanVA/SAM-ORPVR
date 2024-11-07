@@ -16,7 +16,7 @@ Hi as you all know the original ORPVR by https://github.com/jinjungyu/ORPVR has 
     - This repo: crop->masking->inpainting->relocating->encoding
 7. AOT-GAN has a poorer performance as mentioned in the paper, but it can be selected and used.
 8. If you are using GPU, install the relvant python GPU torch libraries (Step 1 in Setting up Guide) BEFORE installing mmcv-full, or else you will install the mmcv-full CPU version.
-
+`e2fgvi_hq` should only be used as the model, other models are not as effective, and `dynamic` should be used (mode 2) for the relocating
 Video Output:
 
 https://github.com/user-attachments/assets/ba2d2ad6-ed55-43d9-bd63-faac7083846a
@@ -25,6 +25,7 @@ https://github.com/user-attachments/assets/ba2d2ad6-ed55-43d9-bd63-faac7083846a
 ### Setting Up Guide
 Navigate to the `src` directory
 I use windows using python 3.9.x, but you can also set up a docker container if it is more manageable. Also, if you are using GPU. Remember to do step 1 first then step 2.
+
 1. **Install the correct CUDA version (I am using 11.7)**
 
     ### CUDAv11.7
@@ -282,7 +283,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     ##### Step 4: Relocating (relocating.py)
     ```bash
-    python relocating.py result_inpaint/bmx-bumps/e2fgvi_hq --mode 0
+    python relocating.py result_inpaint/bmx-bumps/e2fgvi_hq --mode 2
     ```
     `--mode` can be integers `--mode 0`, `--mode 1`, `--mode 2` for: (0:'original', 1:'offset', 2:'dynamic'), saves to /result/bmx-bumps/<--model>/<--mode> dir
 
@@ -316,7 +317,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     ##### Step 1: Move to harmonizer
     ```bash
-    python prepforharmonizer.py x --mode 0
+    python prepforharmonizer.py x --mode <mode> --width <target_width> --height <target_height>
     ```
 
     ##### Step 2: Run the harmonizer
@@ -333,7 +334,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     ##### Example:
     ```bash
-    python prepforharmonizer.py result --mode 0 --width 854 --height 480
+    python prepforharmonizer.py result --mode 2 --width 854 --height 480
     ```
 
     ```bash
@@ -384,9 +385,9 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ##### Example (in order of 1. 2. 3.):     
 
     ```bash
-    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
-    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
-    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --harmonize --sam2-segment --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/master.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --harmonize --sam2-segment --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```
 
 12. **Individual workflows for testing**
@@ -399,7 +400,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
 
     ##### Step 2: Applies mask2former segmentation model for humans unless the following flags are specified
     ```bash 
-    ./scripts/bulk.sh <image_parent_directory> <model> <mode> [--inpaint-only] [--no-mask-model] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
+    ./scripts/bulk.sh <image_parent_directory> <model> <mode> [--inpaint-only] [--relocating-only] [--no-mask-model] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
     ```
     On completion: inpainted frames in `result_inpaint` dir, relocated frames in `result` dir, video in `video` dir
 
@@ -408,6 +409,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ./scripts/add_harmonization.sh --width <t_width> --height <t_height> --mode <mode>
     ```
     On completion: harmonized videos in `videoHarmonized` dir
+    *NOTE: If you are using harmonization again where there are other models directory already present in `results`, please delete that model dir as only 1 model dir should be present in results for harmonization eg: `results/e2fgvi_hq` OR `results/aotgan` and also delete the `harmonize` dir
 
     ```bash
     <image_parent_directory> -> directory containing folders that would containin sample images each .......DAVIS-test/JPEGImages/480p/**/**(.jpg) eg: 480p/breakdance-flare/00000.jpg, test/surf/00001.jpg
@@ -418,6 +420,7 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     <t_width> -> retargetting width
     <t_height> -> retargetting height
     [--inpaint-only] -> applies inpainting network ONLY (if you already have the segments in the `dataset` dir)
+    [--relocating-only] -> applies relocation algorithm and encoding ONLY (if you already have the `result` dir)
     [--no-mask-model] -> Uses predefined segments
     [--crop_to_width] -> specify a required <ct_width> if not, defaults to `640`
     [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
@@ -430,16 +433,22 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ##### SAM2 + Harmonizer:
     ```bash
     ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 640 --height 480
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
-    ./scripts/add_harmonization.sh --width 854 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
     ```
 
     ##### Predefined segments:
     ```bash
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --no-mask-model --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ```
 
     ##### Mask2former segments:
     ```bash
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 0 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ```
+
+    ##### Get videos for diff modes (requires results_inpaint dir with original/offset/dynamic):
+    ```bash
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --relocating-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
     ```
