@@ -4,11 +4,14 @@ from PIL import Image, ImageTk,ImageDraw, ImageFont, ImageOps
 import tkinter as tk
 from tkinter import Label, Button, Text
 import cv2
+import csv
 from sam2.build_sam import build_sam2_video_predictor
 import matplotlib.pyplot as plt
 import json
 import shutil
 import argparse
+import time
+import math
 class SAM2segmenterUI:
     def __init__(self, points, labels, model_cfg, video_dir, checkpoint):
         self.points = points
@@ -154,13 +157,48 @@ class SAM2segmenterUI:
         if os.path.isfile(image_path) and image_file.lower().endswith(('.png', '.jpg', '.jpeg')):
             shutil.copy(image_path, images_output_dir)
       video_segments={}
+      metrics_data = []  # List to hold metrics data for saving in CSV
+      propagation_start_time = time.time()
       for out_frame_idx,out_obj_ids,out_mask_logits in self.predictor.propagate_in_video(self.inference_state):
-         video_segments[out_frame_idx]={
-            out_obj_id:(out_mask_logits[i]>0.0).cpu().numpy() 
-            for i, out_obj_id in enumerate(out_obj_ids)
-         }
+        video_segments[out_frame_idx]={
+          out_obj_id:(out_mask_logits[i]>0.0).cpu().numpy() 
+          for i, out_obj_id in enumerate(out_obj_ids)
+        }
+         # Capture dimensions of the output frame (assumes out_mask_logits has the shape [height, width])
+        if len(out_mask_logits.shape) >= 2:
+            height, width = out_mask_logits.shape[-2], out_mask_logits.shape[-1]
+        else:
+            height, width = None, None  # Default if the shape is not what we expect
+
+        # Save time taken and dimensions for each frame
+        
       vis_frame_stride = 1
       #print("Generated frame indices:", list(video_segments.keys()))
+      propagation_end_time = time.time()
+      time_taken_for_propagation =  math.ceil(propagation_end_time - propagation_start_time)
+     # Save metrics to CSV
+      metrics_file_path = os.path.join(parent_dir, "metrics", "sam2_metrics.csv")
+      metrics_data.append({
+            "ImageSetID": os.path.basename(self.video_dir),
+            "Width": width,
+            "Height": height,
+            "T_propagation":time_taken_for_propagation
+        })
+      if not os.path.exists(os.path.dirname(metrics_file_path)):
+          os.makedirs(os.path.dirname(metrics_file_path))
+
+      # If the file doesn't exist, write the header
+      if not os.path.exists(metrics_file_path):
+          with open(metrics_file_path, mode='w', newline='') as file:
+              writer = csv.DictWriter(file, fieldnames=["ImageSetID", "Width", "Height", "T_propagation"])
+              writer.writeheader()
+
+      # Append the frame metrics data
+      with open(metrics_file_path, mode='a', newline='') as file:
+          writer = csv.DictWriter(file, fieldnames=["ImageSetID", "Width", "Height", "T_propagation"])
+          writer.writerows(metrics_data)
+
+      print(f"Metrics saved to {metrics_file_path}")
       for out_frame_idx in range(0, len(self.frame_names), vis_frame_stride):
         # Load the current frame as background
         if out_frame_idx in video_segments:
@@ -204,7 +242,7 @@ class SAM2segmenterUI:
               json.dump(objects, f)
         else:
           print(f"Warning: Frame index {out_frame_idx} not found in video_segments")
-
+     
     def reset_frame(self):
       print("reset!")
       self.points.clear()

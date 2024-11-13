@@ -461,11 +461,35 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ```
     13. **Generate properties of the images (number of frames and name)**
 
-        ```bash
-        ./scripts/generate_properties.sh <image_parent_directory>
-        ```
+    ```bash
+    ./scripts/generate_properties.sh <image_parent_directory>
+    ```
+    - Get masks area (`dataset` dir required)
+    ```bash
+    python get_masks_metrics.py
+    ```
+    eg:
+    ```bash
+    ./scripts/generate_properties.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p
+    ```
 
-        eg:
-        ```bash
-        ./scripts/generate_properties.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p
-        ```
+    14. **Experiments**
+    1. Default
+    ```bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p --width 640 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
+    ```
+    2. 16:9 to 9:16 (widescreen to portrait)
+    ```bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p --width 854 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
+    ./scripts/add_harmonization.sh --width 480 --height 854 --mode 2
+    ```
+
+    3. 9:16 to 16:9 (portrait to widescreen)
+    ```bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p --width 480 --height 854
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 480 --crop_to_height 854 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
+    ```
