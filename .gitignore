@@ -21,3 +21,4 @@
 !src/scripts
 !src/scripts**
 !src/postprocessing.py
+!metrics

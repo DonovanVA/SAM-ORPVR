@@ -32,13 +32,20 @@ while [[ "$#" -gt 0 ]]; do
   esac
   shift
 done
-
+# CSV output file
+mkdir -p metrics
+CSV_FILE="metrics/harmonization_metrics.csv"
+# Add header to CSV file if it doesn't exist
+if [ ! -f "$CSV_FILE" ]; then
+    echo "ImageSetID,T_harmonize,T_encoding,T_wt,T_ht" > "$CSV_FILE"
+fi
 # Prepare for harmonizer
 echo "Running prepforharmonizer.py to prepare for harmonization with width $WIDTH and height $HEIGHT..."
 python prepforharmonizer.py result --mode "$MODE" --height "$HEIGHT" --width "$WIDTH"
 
 # Navigate to the harmonized directories and run harmonization
 for HARMONIZE_DIR in harmonize/*/; do  # The trailing slash ensures we only get directories
+    DIR_NAME=$(basename "$HARMONIZE_DIR")  # Extract only the final directory name
     echo "Processing directory: $HARMONIZE_DIR"
     
     # Navigate to the Harmonizer directory
@@ -46,16 +53,24 @@ for HARMONIZE_DIR in harmonize/*/; do  # The trailing slash ensures we only get 
 
     # Run the harmonization
     echo "Running harmonization on $HARMONIZE_DIR..."
+    START_TIME=$(date +%s)
     python -m demo.image_harmonization.run --example-path "../$HARMONIZE_DIR"
+    END_TIME=$(date +%s)
+    T_HARMONIZE=$((END_TIME - START_TIME))  # Calculate time taken for harmonization
+    echo "Time taken for harmonization (Tharmonize) on $HARMONIZE_DIR: ${T_HARMONIZE}s"
     
     # Navigate back to the parent directory
     cd .. || exit
 
     # Run encoding on harmonized images
     echo "Running encoding.py on ${HARMONIZE_DIR}harmonized..."
+    E_START_TIME=$(date +%s)
     python encoding.py "${HARMONIZE_DIR}harmonized" --mode "$MODE" --harmonize
-
-    echo "Completed harmonisation for ${HARMONIZE_DIR}harmonized...proceeding to the next image set"
+    E_END_TIME=$(date +%s)
+    T_ENCODING=$((E_END_TIME - E_START_TIME))
+    # Append metrics to CSV file with WIDTH and HEIGHT columns
+    echo "Completed harmonisation for ${DIR_NAME} harmonized...proceeding to the next image set, time taken: ${T_ENCODING}s"
+    echo "${DIR_NAME},${T_HARMONIZE},${T_ENCODING},${WIDTH},${HEIGHT}" >> "$CSV_FILE"
 done
 
 echo "Harmonization process completed for all directories."

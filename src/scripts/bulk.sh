@@ -86,7 +86,12 @@ case "$MODE" in
     RESULT_TYPE="dynamic"
     ;;
 esac
-
+# Output CSV file for metrics
+mkdir -p metrics
+METRICS_FILE="metrics/pipeline_metrics.csv"
+if [ ! -f "$METRICS_FILE" ]; then
+  echo "ImageSetID,C_wt,C_ht,T_wt,T_ht,Inpaint,Relocate,Encoding_Raw" > "$METRICS_FILE"
+fi
 # Process each subdirectory in the parent directory
 for SAMPLE_DIR in "$PARENT_DIR"/*/; do
     # Remove trailing slash from SAMPLE_DIR
@@ -118,22 +123,35 @@ for SAMPLE_DIR in "$PARENT_DIR"/*/; do
 
     if [ "$RELOCATING_ONLY" -eq 0 ]; then
         # Step 3: Inpaint images using the specified model
+        T3_start=$(date +%s)
         echo "Running inpainting.py on dataset/${SAMPLE_NAME##*/} with model $MODEL_TYPE..."
         python inpainting.py "dataset/${SAMPLE_NAME##*/}" --model "$MODEL_TYPE"
+        T3_end=$(date +%s)
+        T_step3=$((T3_end - T3_start))
     else
         echo "Skipping inpainting step as --relocating-only flag is set."
+        T_step3=0
     fi
 
     # Step 4: Relocate images using the specified mode
+    T4_start=$(date +%s)
     echo "Running relocating.py on result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE with mode $MODE... to width $TARGET_WIDTH and height $TARGET_HEIGHT"
     python relocating.py "result_inpaint/${SAMPLE_NAME##*/}/$MODEL_TYPE" --mode "$MODE" --width "$TARGET_WIDTH" --height "$TARGET_HEIGHT"
+    T4_end=$(date +%s)
+    T_step4=$((T4_end - T4_start))
 
     # Step 5: Encode images with the corresponding result type based on the mode
+    T5_start=$(date +%s)
     echo "Running encoding.py on result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE..."
     python encoding.py "result/${SAMPLE_NAME##*/}/$MODEL_TYPE/$RESULT_TYPE" --mode "$MODE"
+    T5_end=$(date +%s)
+    T_step5=$((T5_end - T5_start))
 
     echo "Completed processing for directory: $SAMPLE_NAME"
+
+    echo "${SAMPLE_NAME##*/},$CROP_TO_WIDTH,$CROP_TO_HEIGHT,$TARGET_WIDTH,$TARGET_HEIGHT,$T_step3,$T_step4,$T_step5" >> "$METRICS_FILE"
 done
 
 echo "Pipeline execution completed for all directories."
+echo "Metrics saved to $METRICS_FILE."
 sleep 3

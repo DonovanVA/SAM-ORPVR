@@ -459,3 +459,13 @@ command 'C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.7\\bin\\nvcc
     ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --relocating-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
     ```
+    13. **Generate properties of the images (number of frames and name)**
+
+        ```bash
+        ./scripts/generate_properties.sh <image_parent_directory>
+        ```
+
+        eg:
+        ```bash
+        ./scripts/generate_properties.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p
+        ```
