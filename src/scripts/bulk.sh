@@ -154,4 +154,4 @@ done
 
 echo "Pipeline execution completed for all directories."
 echo "Metrics saved to $METRICS_FILE."
-sleep 3
+sleep 5

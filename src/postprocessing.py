@@ -30,7 +30,22 @@ def move_directories(src_folder, name):
             # Move the directory
             shutil.move(src_dir, target_folder)
             print(f"Moved: {src_dir} to {target_folder}")
+    metrics_src = os.path.join(src_folder, "metrics")
+    metrics_dest = os.path.join(target_folder, "metrics")
 
+    if os.path.exists(metrics_src) and os.path.isdir(metrics_src):
+        # Create the target 'metrics' directory
+        os.makedirs(metrics_dest, exist_ok=True)
+
+        # Move everything except 'properties.csv'
+        for item in os.listdir(metrics_src):
+            item_path = os.path.join(metrics_src, item)
+            if os.path.isfile(item_path) and os.path.basename(item_path) == "properties.csv":
+                continue  # Skip 'properties.csv'
+            shutil.move(item_path, os.path.join(metrics_dest, item))
+            print(f"Moved: {item_path} to {metrics_dest}")
+
+        print(f"Handled: {metrics_src}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Move specified directories to a runs folder.")
     parser.add_argument("--name", type=str, required=True, help="Name for the runs folder.")
