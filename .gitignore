@@ -9,6 +9,7 @@
 !README.md
 !.gitignore
 !src/crop.py
+!Install.md
 !src/DAVIS-test/
 !src/DAVIS-test/**
 !src/util
