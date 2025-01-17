@@ -31,7 +31,7 @@
     │   │   │   ├── mask_0002.png
     │   │   │   └── ...
     ```
-    Your folder must include a `.../Annotations/` subdirectory like shown above containing the predetermined masks if you want to use mode 1
+    Your folder must include a `../Annotations/` subdirectory like shown above containing the predetermined masks if you want to use mode 1
         
     ##### Step 1: Crop (crop.py)
     ```bash
@@ -205,9 +205,7 @@
     ```
     
     On completion: harmonized videos in `videoHarmonized` dir
-    *NOTE: If you are using harmonization again where there are other models directory already present in `results`, please delete that model dir as only 1 model dir should be present in results for harmonization eg: `results/e2fgvi_hq` OR `results/aotgan` and also delete the `harmonize` dir
-
-   
+    *NOTE: If you are using harmonization again where there are other models directory already present in `result`, please delete that model dir as only 1 model dir should be present in results for harmonization eg: `result/e2fgvi_hq` OR `result/aotgan` and also delete the `harmonize` dir
 
     ##### Example:
 
