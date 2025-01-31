@@ -31,16 +31,16 @@ class Relocator:
         # difference between new width and current width
         self.hor_offset = self.nw - self.w
         # difference between new height and current height
-        self.vert_offset = self.nh - self.h
+        #self.vert_offset = self.nh - self.h
         # half offset
         self.hor_offset_half = self.hor_offset // 2
-        self.vert_offset_half = self.vert_offset // 2
+        #self.vert_offset_half = self.vert_offset // 2
         # ------- new addition -------
         self.margin = 5
         self.l_line = self.margin
         self.r_line = self.nw - self.margin
-        self.u_line = self.margin
-        self.d_line = self.nh - self.margin
+        #self.u_line = self.margin
+        #self.d_line = self.nh - self.margin
         self.mode = args.mode
         if self.mode == 2:
             self.pre = None
@@ -73,16 +73,16 @@ class Relocator:
         elif self.mode == 3 or 4:
             for k in range(len(objects['box'])):
                 bbox,coor = objects['box'][k],objects['coor'][k]
-                ## Dynamic
-                ## check the left edge
-                if bbox[0] < self.l_line:
+                # v3 upgrade: change the offset intuition for contracting width
+                # check the right edge
+                if bbox[2] < 0:
                     dj = 0
-                ## check the right edge
-                elif bbox[2] > self.r_line:
+                ## check the left edge
+                elif bbox[0] > self.nw:
                     dj = self.hor_offset
                 else:
                     dj = self.hor_offset_half
-
+                    ##*if the offset is higher, the error when the object is blocked is lower (how do we optimise this?)
                 # +ve: right up
                 # check for consec increments, if so then start monitoring the right bbox?
                 # dj=0
