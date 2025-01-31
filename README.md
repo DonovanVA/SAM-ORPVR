@@ -246,20 +246,25 @@
     ```
 
     7. **Experiments**
-    1. Default
+    1. Dynamic Default from ORPVR (640x480 to 854x480)
     ```bash
     ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 640 --height 480
     ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
     ```
-    2. 16:9 to 9:16 (widescreen to portrait) -> some failures for mode 2 (* use mode 1 instead)
+    2. Offset 16:9 to 9:16 (widescreen to portrait 854x480 to 480x854) -> some failures for mode 2 (* use mode 1 instead)
     ```bash
     ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 854 --height 480
     ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 1 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
     ./scripts/add_harmonization.sh --width 480 --height 854 --mode 1
     ```
-
-    3. 9:16 to 16:9 (portrait to widescreen) -> irrelevant for davis as crop is too small??? -another dataset may be required
+    3. w2p 16:9 to 9:16 (widescreen to portrait 854x480 to 480x854) -> some failures for mode 2 (* use mode 1 instead)
+    ```bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 854 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 3 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
+    ./scripts/add_harmonization.sh --width 480 --height 854 --mode 3
+    ```
+    4. BUG 9:16 to 16:9 (portrait to widescreen) -> irrelevant for davis as crop is too small??? -another dataset may be required
     ```bash
     ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 480 --height 854
     ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 480 --crop_to_height 854 --target_width 854 --target_height 480
@@ -273,6 +278,3 @@
     python postprocessing.py --name name_run
     ```
     *remember to move the metrics folder in src to somewhere you wanna keep
-
-    8. **Relocating modes for 16:9 to 9:16 (wide to narrow, short to high)**
-    *pending changes to be made

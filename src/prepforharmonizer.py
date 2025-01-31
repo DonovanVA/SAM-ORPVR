@@ -74,7 +74,7 @@ def resize_image_opencv(image_tensor, new_width, new_height):
     return resized_image_tensor
 
 def copy_images_and_masks(destination_base_path, masks_base_path):
-    modes = ['original', 'offset', 'dynamic']
+    modes = ['original', 'offset', 'dynamic', 'wtp' ,'ptw']
     
     for foldernameA in os.listdir(args.src):
         folderA_path = os.path.join(args.src, foldernameA)
