@@ -258,23 +258,34 @@
     ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 1 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
     ./scripts/add_harmonization.sh --width 480 --height 854 --mode 1
     ```
-    3. w2p 16:9 to 9:16 (widescreen to portrait 854x480 to 480x854) -> some failures for mode 2 (* use mode 1 instead)
+    3. wtp 16:9 to 9:16 (widescreen to portrait 854x480 to 480x854) -> some failures for mode 2 (* use mode 1 instead)
     ```bash
     ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 854 --height 480
     ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 3 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
     ./scripts/add_harmonization.sh --width 480 --height 854 --mode 3
     ```
-    4. BUG 9:16 to 16:9 (portrait to widescreen) -> irrelevant for davis as crop is too small??? -another dataset may be required
+
+    4. ptw 9:16 to 16:9 (portrait to widescreen) -> irrelevant for davis as crop is too small??? -another dataset may be required
     ```bash
-    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 480 --height 854
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 480 --crop_to_height 854 --target_width 854 --target_height 480
-    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DATASET_NEW --width 480 --height 854
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DATASET_NEW e2fgvi_hq 4 --inpaint-only --crop_to_width 480 --crop_to_height 854 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 4
     ```
+
+    * If you have more VRAM for 1080p:
+    ```
+    1080p
+    '''bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\1080p --width 1440 --height 1080 
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\1080p e2fgvi_hq 2 --inpaint-only --crop_to_width 1440 --crop_to_height 1080 --target_width 1920 --target_height 1080
+    ./scripts/add_harmonization.sh --width 1920 --height 1080 --mode 2
+    ```
+    
 
     Optional post-processing step:
     ```bash
     python mp4tomov.py video videoMOV       
     python mp4tomov.py videoHarmonized videoHarmonizedMOV 
-    python postprocessing.py --name name_run
+    python postprocessing.py --name exp4_ptw_854x480_to_480x854
     ```
     *remember to move the metrics folder in src to somewhere you wanna keep

@@ -31,16 +31,16 @@ class Relocator:
         # difference between new width and current width
         self.hor_offset = self.nw - self.w
         # difference between new height and current height
-        #self.vert_offset = self.nh - self.h
+        self.vert_offset = self.nh - self.h
         # half offset
         self.hor_offset_half = self.hor_offset // 2
-        #self.vert_offset_half = self.vert_offset // 2
+        self.vert_offset_half = self.vert_offset // 2
         # ------- new addition -------
         self.margin = 5
         self.l_line = self.margin
         self.r_line = self.nw - self.margin
-        #self.u_line = self.margin
-        #self.d_line = self.nh - self.margin
+        self.u_line = self.margin
+        self.d_line = self.nh - self.margin
         self.mode = args.mode
         if self.mode == 2:
             self.pre = None
@@ -70,7 +70,7 @@ class Relocator:
                 for i,j in coor:
                     newimg[i][j+dj] = img[i][j]
         # widescreen to portrait
-        elif self.mode == 3 or 4:
+        elif self.mode == 3:
             for k in range(len(objects['box'])):
                 bbox,coor = objects['box'][k],objects['coor'][k]
                 # v3 upgrade: change the offset intuition for contracting width
@@ -100,6 +100,20 @@ class Relocator:
                     #else:
                         #newimg[int(i*self.w_diff_ratio)][int(j*self.w_diff_ratio)+k] = img[i][j]
                 # fill in the gaps    
+        elif self.mode == 4:
+            for k in range(len(objects['box'])):
+                bbox,coor = objects['box'][k],objects['coor'][k]
+                if bbox[0] < self.u_line:
+                    di = 0
+                elif bbox[2] > self.d_line:
+                    di = self.vert_offset
+                else:
+                    di = self.vert_offset_half
+                for i,j in coor:
+                     #print(j+dj)
+                     if i+di>0 and (i+di)<self.nh:
+                        for k in range(int(self.overflow)):
+                            newimg[i+di][j] = img[i][j]
         return newimg
 
 # deprecated
