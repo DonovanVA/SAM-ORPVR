@@ -27,7 +27,7 @@ class Relocator:
         self.w_diff_ratio=self.nw/self.w  # small = reduction
         self.h_diff_ratio=self.nh/self.h
         # The maximum gap between each stretched pixel to fill in the gaps later 
-        self.overflow=max(math.ceil(self.h_diff_ratio),self.w_diff_ratio)
+        self.overflow=max(math.ceil(self.h_diff_ratio),math.ceil(self.w_diff_ratio))
         # difference between new width and current width
         self.hor_offset = self.nw - self.w
         # difference between new height and current height
@@ -113,7 +113,7 @@ class Relocator:
                      #print(j+dj)
                      if i+di>0 and (i+di)<self.nh:
                         for k in range(int(self.overflow)):
-                            newimg[i+di][j] = img[i][j]
+                            newimg[i+di][int(j*self.w_diff_ratio)+k] = img[i][j]
         return newimg
 
 # deprecated
