@@ -18,7 +18,7 @@ if args.harmonize:
     path = args.src
     _, clip, model = args.src.split('/')
     dstdir = os.path.join(viddir, clip + "_harmonized")
-    mode_list = ['original', 'offset', 'dynamic']
+    mode_list = ['original', 'offset', 'dynamic','wtp','ptw']
     if args.mode:
         pathOut = os.path.join(dstdir, f'{clip}_{model}_{mode_list[int(args.mode)]}.mp4')
     else:

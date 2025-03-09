@@ -172,7 +172,7 @@
     ```
     On completion: cropped SAM2 segments in `dataset` dir
 
-    ##### Step 2: Applies mask2former segmentation model for humans unless the following flags are specified
+    ##### Step 2: Applies inpainting and relocating (modified ORPVR), will use mask2former to for segmentation by default unless --inpaint-only is specified, requires `dataset` dir
     ```bash 
     ./scripts/bulk.sh <image_parent_directory> <model> <mode> [--inpaint-only] [--relocating-only] [--no-mask-model] [--crop_to_width] <ct_width> [--crop_to_height] <ct_height> [--target_width] <t_width> [--target_height] <t_height>
     ```
@@ -186,7 +186,7 @@
     <t_width> -> retargetting width
     <t_height> -> retargetting height
     [--inpaint-only] -> applies inpainting network ONLY (if you already have the segments in the `dataset` dir)
-    [--relocating-only] -> applies relocation algorithm and encoding ONLY (if you already have the `result` dir)
+    [--relocating-only] -> applies relocation algorithm and encoding ONLY (if you already have the `result_inpaint` dir)
     [--no-mask-model] -> Uses predefined segments
     [--crop_to_width] -> specify a required <ct_width> if not, defaults to `640`
     [--crop_to_height] -> specify a required<ct_height> if not, defaults to `480`
@@ -228,10 +228,10 @@
 
     ##### Get videos for diff modes (requires results_inpaint dir with original/offset/dynamic):
     ```bash
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --relocating-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --relocating-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
     ```
-    6. **Generate properties of the images (number of frames and name)**
+    6. **Generate properties of the images (metrics/properties.csv - number of frames and name)**
 
     ```bash
     ./scripts/generate_properties.sh <image_parent_directory>
@@ -242,34 +242,50 @@
     ```
     eg:
     ```bash
-    ./scripts/generate_properties.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p
+    ./scripts/generate_properties.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p
     ```
 
     7. **Experiments**
-    1. Default
+    1. Dynamic Default from ORPVR (640x480 to 854x480)
     ```bash
-    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p --width 640 --height 480
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 640 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 640 --crop_to_height 480 --target_width 854 --target_height 480
     ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
     ```
-    2. 16:9 to 9:16 (widescreen to portrait) -> some failures for mode 2 (* use mode 1 instead)
+    2. Offset 16:9 to 9:16 (widescreen to portrait 854x480 to 480x854) -> some failures for mode 2 (* use mode 1 instead)
     ```bash
-    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p --width 854 --height 480
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 1 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 854 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 1 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
     ./scripts/add_harmonization.sh --width 480 --height 854 --mode 1
     ```
-
-    3. 9:16 to 16:9 (portrait to widescreen) -> irrelevant for davis as crop is too small??? -another dataset may be required
+    3. wtp 16:9 to 9:16 (widescreen to portrait 854x480 to 480x854) -> some failures for mode 2 (* use mode 1 instead)
     ```bash
-    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p --width 480 --height 854
-    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\480p e2fgvi_hq 2 --inpaint-only --crop_to_width 480 --crop_to_height 854 --target_width 854 --target_height 480
-    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 2
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p --width 854 --height 480
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS-test\JPEGImages\480p e2fgvi_hq 3 --inpaint-only --crop_to_width 854 --crop_to_height 480 --target_width 480 --target_height 854
+    ./scripts/add_harmonization.sh --width 480 --height 854 --mode 3
     ```
+
+    4. ptw 9:16 to 16:9 (portrait to widescreen) -> irrelevant for davis as crop is too small??? -another dataset may be required
+    ```bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DATASET_NEW --width 480 --height 854
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DATASET_NEW e2fgvi_hq 4 --inpaint-only --crop_to_width 480 --crop_to_height 854 --target_width 854 --target_height 480
+    ./scripts/add_harmonization.sh --width 854 --height 480 --mode 4
+    ```
+
+    * If you have more VRAM for 1080p:
+    ```
+    1080p
+    '''bash
+    ./scripts/cropAndSAM.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\1080p --width 1440 --height 1080 
+    ./scripts/bulk.sh C:\Users\User\Desktop\FYP\Fix-ORPVR\src\DAVIS\JPEGImages\1080p e2fgvi_hq 2 --inpaint-only --crop_to_width 1440 --crop_to_height 1080 --target_width 1920 --target_height 1080
+    ./scripts/add_harmonization.sh --width 1920 --height 1080 --mode 2
+    ```
+    
 
     Optional post-processing step:
     ```bash
     python mp4tomov.py video videoMOV       
     python mp4tomov.py videoHarmonized videoHarmonizedMOV 
-    python postprocessing.py --name name_run
+    python postprocessing.py --name exp4_ptw_854x480_to_480x854
     ```
     *remember to move the metrics folder in src to somewhere you wanna keep

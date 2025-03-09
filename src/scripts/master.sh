@@ -4,7 +4,7 @@ cd ../src
 if [ "$#" -lt 3 ]; then
   echo "Usage: $0 <image_parent_directory> <model_type> <mode> [--no-mask-model] [--sam2-segment] [--harmonize] [--crop_to_width <crop_to_width>] [--crop_to_height <crop_to_height>] [--target_width <target_width>] [--target_height <target_height>]"
   echo "Model types: aotgan, e2fgvi, e2fgvi_hq"
-  echo "Modes: 0 (original), 1 (offset), 2 (dynamic)"
+  echo "Modes: 0 (original), 1 (offset), 2 (dynamic) 3(w2p)"
   exit 1
 fi
 
@@ -68,7 +68,7 @@ if [[ "$MODEL_TYPE" != "aotgan" && "$MODEL_TYPE" != "e2fgvi" && "$MODEL_TYPE" !=
 fi
 
 # Validate mode as an integer
-if ! [[ "$MODE" =~ ^[0-2]$ ]]; then
+if ! [[ "$MODE" =~ ^[0-4]$ ]]; then
   echo "Invalid mode: $MODE"
   echo "Valid options: 0 (original), 1 (offset), 2 (dynamic)"
   exit 1
@@ -84,6 +84,9 @@ case "$MODE" in
     ;;
   2)
     RESULT_TYPE="dynamic"
+    ;;
+  3)
+    RESULT_TYPE="wtp"
     ;;
 esac
 

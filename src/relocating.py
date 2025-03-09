@@ -11,7 +11,7 @@ from util.option_relocate import args, Relocator
             
 def main(args):
     args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    modes = ['original','offset','dynamic']
+    modes = ['original','offset','dynamic','wtp','ptw']
     modelname = os.path.basename(args.src)
     if args.src.endswith('/'):
         args.src = args.src[:-1]
@@ -54,7 +54,7 @@ def main(args):
         # Boxes and Objects
         frame = relocator.relocate(bimg,img,objects)
         cv2.imwrite(os.path.join(args.resultdir,fname), frame)
-    
+        
         # if not isinstance(frames,list):
         #     cv2.imwrite(os.path.join(args.resultdir,fname), frames)
         # elif len(frames) == 1:

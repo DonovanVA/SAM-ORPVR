@@ -1,12 +1,12 @@
 import cv2
 import argparse
 import numpy as np
-
+import math
 parser = argparse.ArgumentParser(description='Object Relocation')
 # ----------------------------------
 parser.add_argument('src', type=str, help='single image or directory')
 parser.add_argument('--dstdir', default='result', help='result save dir')
-parser.add_argument('--mode', default=2, choices=[0,1,2], type=int, help='relocation mode')
+parser.add_argument('--mode', default=2, choices=[0,1,2,3,4], type=int, help='relocation mode')
 parser.add_argument('--width', default=854, type=int, help='relocation width')
 parser.add_argument('--height', default=480, type=int, help='relocation height')
 # ----------------------------------
@@ -15,20 +15,41 @@ args = parser.parse_args()
 class Relocator:
     def __init__(self,args):
         self.w = args.w
+        self.h = args.h
         self.nw = args.width
-        self.offset = self.nw - self.w
-        self.offset_half = self.offset // 2
+        self.nh = args.height
+        print("original width: "+str(self.w))
+        print("original height: "+str(self.h))
+        print("new target width: "+str(self.nw))
+        print("new target height: "+str(self.nh))
+
+        # ------- new addition -------
+        self.w_diff_ratio=self.nw/self.w  # small = reduction
+        self.h_diff_ratio=self.nh/self.h
+        # The maximum gap between each stretched pixel to fill in the gaps later 
+        self.overflow=max(math.ceil(self.h_diff_ratio),math.ceil(self.w_diff_ratio))
+        # difference between new width and current width
+        self.hor_offset = self.nw - self.w
+        # difference between new height and current height
+        self.vert_offset = self.nh - self.h
+        # half offset
+        self.hor_offset_half = self.hor_offset // 2
+        self.vert_offset_half = self.vert_offset // 2
+        # ------- new addition -------
         self.margin = 5
         self.l_line = self.margin
-        self.r_line = self.w - self.margin
+        self.r_line = self.nw - self.margin
+        self.u_line = self.margin
+        self.d_line = self.nh - self.margin
         self.mode = args.mode
         if self.mode == 2:
             self.pre = None
-            self.state_offset = [0, self.offset_half, self.offset]
+            self.state_offset = [0, self.hor_offset_half, self.hor_offset]
             self.augment = False
             self.n_augframes = 4
     def relocate(self,bimg,img,objects):
         newimg = bimg.copy()
+        #print(objects['box'])
         if self.mode == 0:
             for coor in objects['coor']:
                 for i,j in coor:
@@ -36,19 +57,63 @@ class Relocator:
         elif self.mode == 1:
             for coor in objects['coor']:
                 for i,j in coor:
-                    newimg[i][j+self.offset] = img[i][j]
+                    newimg[i][j+self.hor_offset] = img[i][j]
         elif self.mode == 2:
             for k in range(len(objects['box'])):
                 bbox,coor = objects['box'][k],objects['coor'][k]
                 if bbox[0] < self.l_line:
                     dj = 0
                 elif bbox[2] > self.r_line:
-                    dj = self.offset
+                    dj = self.hor_offset
                 else:
-                    dj = self.offset_half
+                    dj = self.hor_offset_half
                 for i,j in coor:
                     newimg[i][j+dj] = img[i][j]
-        
+        # widescreen to portrait
+        elif self.mode == 3:
+            for k in range(len(objects['box'])):
+                bbox,coor = objects['box'][k],objects['coor'][k]
+                # v3 upgrade: change the offset intuition for contracting width
+                # check the right edge
+                if bbox[2] < 0:
+                    dj = 0
+                ## check the left edge
+                elif bbox[0] > self.nw:
+                    dj = self.hor_offset
+                else:
+                    dj = self.hor_offset_half
+                    ##*if the offset is higher, the error when the object is blocked is lower (how do we optimise this?)
+                # +ve: right up
+                # check for consec increments, if so then start monitoring the right bbox?
+                # dj=0
+                for i,j in coor:
+                     # must fall within boundaries if contracting
+                     if j+dj>0 and (j+dj)<self.nw:
+                            # v1 upgrade: add the diff_ratio params using overflow
+                            for k in range(int(self.overflow)):
+                                # v2 upgrade: add k
+                                newimg[int(i*self.h_diff_ratio)+k][j+dj] = img[i][j]
+                # scale the image according to ratio
+                # for k in range(int(self.overflow)):
+                    #if(self.w_diff_ratio<self.h_diff_ratio):
+                        #newimg[int(i*self.h_diff_ratio)+k][int(j*self.w_diff_ratio)] = img[i][j]
+                    #else:
+                        #newimg[int(i*self.w_diff_ratio)][int(j*self.w_diff_ratio)+k] = img[i][j]
+                # fill in the gaps    
+        elif self.mode == 4:
+            for k in range(len(objects['box'])):
+                bbox,coor = objects['box'][k],objects['coor'][k]
+                if bbox[0] < self.u_line:
+                    di = 0
+                elif bbox[2] > self.d_line:
+                    di = self.vert_offset
+                else:
+                    di = self.vert_offset_half
+                for i,j in coor:
+                     #print(j+dj)
+                     if i+di>0 and (i+di)<self.nh:
+                        for k in range(int(self.overflow)):
+                            newimg[i+di][int(j*self.w_diff_ratio)+k] = img[i][j]
         return newimg
 
 # deprecated
@@ -57,15 +122,15 @@ class Relocator:
 #     def __init__(self,args):
 #         self.w = args.w
 #         self.nw = args.new_w
-#         self.offset = self.nw - self.w
-#         self.offset_half = self.offset // 2
+#         self.hor_offset = self.nw - self.w
+#         self.hor_offset_half = self.hor_offset // 2
 #         self.margin = 5
 #         self.l_line = self.margin
 #         self.r_line = self.w - self.margin
 #         self.mode = args.mode
 #         if self.mode == 2:
 #             self.pre = None
-#             self.state_offset = [0, self.offset_half, self.offset]
+#             self.state_offset = [0, self.hor_offset_half, self.hor_offset]
 #             self.augment = False
 #             self.n_augframes = 4
 #     def __call__(self,bimg,img,objects):        
@@ -79,7 +144,7 @@ class Relocator:
 #             newimg = bimg.copy()
 #             for coor in objects['coor']:
 #                 for i,j in coor:
-#                     newimg[i][j+self.offset] = img[i][j]
+#                     newimg[i][j+self.hor_offset] = img[i][j]
 #             return newimg
 #         elif self.mode == 2:
 #             num = len(objects['box']) # 현재 프레임 객체 개수
@@ -269,7 +334,7 @@ if __name__ == '__main__':
         
         bimg = cv2.imread(flist[0],cv2.IMREAD_COLOR)
         args.h,args.w,_ = bimg.shape
-        args.new_w = int(np.ceil(args.h * 16 / 9)) # 640 -> 854
+        #args.new_w = int(np.ceil(args.h * 16 / 9)) # 640 -> 854
         
         relocator = Relocator(args)
         
