@@ -1,8 +1,8 @@
 # SAM-ORPVR
 ## Installation 
-Install.md
+[Install.md](https://github.com/DonovanVA/SAM-ORPVR/blob/main/Install.md)
 ## Videos:
-Videos.md
+[Videos.md](https://github.com/DonovanVA/SAM-ORPVR/blob/main/Videos.md)
 ## Testing/Running the pipeline
 
 1. **Test commands (In order)**
