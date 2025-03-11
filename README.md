@@ -1,7 +1,8 @@
 # SAM-ORPVR
-
-
-
+## Installation 
+Install.md
+## Videos:
+Videos.md
 1. **Test commands (In order)**
 
     `DAVIS-test` - contains folders with folders containing sample images from the 480p DAVIS 2016 dataset each:
