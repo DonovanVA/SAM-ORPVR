@@ -1,7 +1,7 @@
 # Videos
-Welcome to the videos segment, here you can see all the videos in the google drive or download the videos used in the report directly from the downloadable links
+Welcome to the videos segment, here you can see the videos in the google drive or download the videos used in the report directly from the downloadable links
 ### Google drive:
-https://drive.google.com/drive/folders/1ePiZr-IPyu7K4vO00uUL-ffjtv6OdpKx?usp=sharing
+https://drive.google.com/drive/folders/1-KOkPlVMzxrAhdLu-ve7-Qk1yNyN1b13?usp=sharing
 
 ### Videos used in the report (downloadable)
 ##### Predefined (640x480p to 854x480p):
