@@ -14,7 +14,7 @@ https://drive.google.com/drive/folders/1-KOkPlVMzxrAhdLu-ve7-Qk1yNyN1b13?usp=sha
 
 `https://github.com/user-attachments/assets/d2f35599-c08a-4348-8da7-c303418643c4`
 
-Mask2former (640x480p to 854x480p):
+##### Mask2former (640x480p to 854x480p):
 
 `https://github.com/user-attachments/assets/8fba3bf4-e9d2-4c4c-86e9-43b3df069b73`
 
@@ -24,7 +24,7 @@ Mask2former (640x480p to 854x480p):
 
 `https://github.com/user-attachments/assets/439fe197-ffcc-45fe-bd2f-ff515f862bf8`
 
-Experiment 1 (640x480p to 854x480p):
+##### Experiment 1 (640x480p to 854x480p):
 
 `https://github.com/user-attachments/assets/f31ac7d9-d74c-4539-972d-ddc87492e000`
 
@@ -34,7 +34,7 @@ Experiment 1 (640x480p to 854x480p):
 
 `https://github.com/user-attachments/assets/f1ea896e-dd36-4062-b617-3f6aab025826`
 
-Experiment 2 (854x480p to 480x854p offset mode):
+##### Experiment 2 (854x480p to 480x854p offset mode):
 
 `https://github.com/user-attachments/assets/05d544c1-cdc5-4364-a32a-f13ae5981f0b`
 
@@ -44,7 +44,7 @@ Experiment 2 (854x480p to 480x854p offset mode):
 
 `https://github.com/user-attachments/assets/732d4e3e-442f-400f-9caa-56e97f4ae818`
 
-Experiment 3 (854x480p to 480x854p widescreen to portrait mode):
+##### Experiment 3 (854x480p to 480x854p widescreen to portrait mode):
 
 `https://github.com/user-attachments/assets/4f083d6c-ff7a-4aef-8068-8082d0974829`
 
